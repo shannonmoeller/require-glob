@@ -1,13 +1,18 @@
 {
   "name": "require-glob",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Require multiple modules using glob patterns. Supports exclusions.",
   "keywords": [
+    "directory",
     "directories",
+    "file",
     "files",
+    "glob",
     "globs",
+    "multi",
     "multiple",
-    "require"
+    "require",
+    "tree"
   ],
   "homepage": "https://github.com/shannonmoeller/require-glob",
   "bugs": "https://github.com/shannonmoeller/require-glob/issues",

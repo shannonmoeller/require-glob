@@ -16,7 +16,7 @@ Requires multiple modules using glob patterns. Supports exclusions.
 
 - `patterns` `{String|Array.<String>}` - A glob string or array of glob strings.
 - `options` `{Object=}` - Options for `globby` module and callbacks (see below).
-- `callback` `{Function(?String, Object)}` - Reduce method responsible for generating object from modules.
+- `callback` `{Function(?String, Object)}`
 
 ```
 ├── unicorn.js
@@ -49,7 +49,7 @@ All options are inherited from [`globby`][globby] with two additions.
 
 [globby]: https://www.npmjs.com/package/globby
 
-### `mapper` `Function(path, i, paths) : Object`
+### `mapper` `Function(filePath, i, filePaths) : Object`
 
 The mapper is reponsible for requiring the globbed modules. The default mapper returns an object containing path information and the result of requiring the module.
 
@@ -70,30 +70,30 @@ The mapper is reponsible for requiring the globbed modules. The default mapper r
         cwd: '/home/jdoe/my-module',
         path: '/home/jdoe/my-module/unicorn.js',
         shortPath: 'unicorn.js',
-        contents: require('./unicorn')
+        exports: require('./unicorn')
     },
     {
         cwd: '/home/jdoe/my-module',
         path: '/home/jdoe/my-module/rainbow/red-orange.js',
         shortPath: 'rainbow/red-orange.js',
-        contents: require('./rainbow/red-orange')
+        exports: require('./rainbow/red-orange')
     },
     {
         cwd: '/home/jdoe/my-module',
         path: '/home/jdoe/my-module/rainbow/yellow_green.js',
         shortPath: 'rainbow/yellow_green.js',
-        contents: require('./rainbow/yellow_green')
+        exports: require('./rainbow/yellow_green')
     },
     {
         cwd: '/home/jdoe/my-module',
         path: '/home/jdoe/my-module/rainbow/BluePurple.js',
         shortPath: 'rainbow/BluePurple.js',
-        contents: require('./rainbow/BluePurple')
+        exports: require('./rainbow/BluePurple')
     }
 ]
 ```
 
-### `reducer` `Function(obj, file, i, files) : obj`
+### `reducer` `Function(result, file, i, files) : result`
 
 The reducer is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. Directory names and file names are converted to `camelCase` and path separators determine the nesting.
 
@@ -122,7 +122,7 @@ Standards for this project, including tests, code coverage, and semantics are en
 
 ----
 
-© 2014 Shannon Moeller <me@shannonmoeller.com>
+© 2015 Shannon Moeller <me@shannonmoeller.com>
 
 Licensed under [MIT](http://shannonmoeller.com/mit.txt)
 

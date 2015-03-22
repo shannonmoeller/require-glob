@@ -53,19 +53,19 @@ function mapper(filePath, i, filePaths) {
 		cwd: cwd,
 		path: filePath,
 		shortPath: shortPaths[i],
-		contents: require(path.resolve(cwd, filePath))
+		exports: require(path.resolve(cwd, filePath))
 	};
 }
 
-function reducer(modules, module) {
-	var keyPath = module.shortPath
+function reducer(result, file) {
+	var keyPath = file.shortPath
 		.split('/')
 		.map(camelCase)
 		.join('.');
 
-	set(modules, keyPath, module.contents);
+	set(result, keyPath, file.exports);
 
-	return modules;
+	return result;
 }
 
 function normalizeOptions(options) {
