@@ -88,6 +88,15 @@ function normalizePaths(options, paths) {
 		.reduce(options.reducer, {});
 }
 
+/**
+ * Requires multiple modules using glob patterns. Supports exclusions.
+ *
+ * @type {Function}
+ * @param {String|Array.<String>} patterns A glob string or array of glob strings.
+ * @param {Object=} options Options for `globby` module and callbacks (see below).
+ * @param {Function(?String, Object)} callback Reduce method responsible for generating object from modules.
+ * @return {Null}
+ */
 function requireGlob(globs, options, callback) {
 	if (arguments.length === 2) {
 		callback = options;
@@ -110,6 +119,15 @@ function requireGlob(globs, options, callback) {
 	});
 }
 
+/**
+ * Syncronous version of the above.
+ *
+ * @method sync
+ * @param {String|Array.<String>} patterns A glob string or array of glob strings.
+ * @param {Object=} options Options for `globby` module and callbacks (see below).
+ * @return {Object}
+ * @static
+ */
 requireGlob.sync = function (globs, options) {
 	var paths = globby.sync(globs, options);
 
