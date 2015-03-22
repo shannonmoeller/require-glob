@@ -16,7 +16,7 @@ Requires multiple modules using glob patterns. Supports exclusions.
 
 - `patterns` `{String|Array.<String>}` - A glob string or array of glob strings.
 - `options` `{Object=}` - Options for `globby` module and callbacks (see below).
-- `callback` `{Function(?String, Object)}` - Reduce method responsible for generating object from modules.
+- `callback` `{Function(?String, Object)}`
 
 ```
 ├── unicorn.js
