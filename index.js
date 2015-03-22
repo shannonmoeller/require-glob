@@ -97,13 +97,13 @@ function normalizePaths(options, paths) {
  * @param {Function(?String, Object)} callback
  * @return {Null}
  */
-function requireGlob(globs, options, callback) {
+function requireGlob(patterns, options, callback) {
 	if (arguments.length === 2) {
 		callback = options;
 		options = null;
 	}
 
-	globby(globs, options, function (err, paths) {
+	globby(patterns, options, function (err, paths) {
 		try {
 			// istanbul ignore if
 			if (err) {
@@ -128,8 +128,8 @@ function requireGlob(globs, options, callback) {
  * @return {Object}
  * @static
  */
-requireGlob.sync = function (globs, options) {
-	var paths = globby.sync(globs, options);
+requireGlob.sync = function (patterns, options) {
+	var paths = globby.sync(patterns, options);
 
 	return normalizePaths(options, paths);
 };
