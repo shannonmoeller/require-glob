@@ -93,8 +93,8 @@ function normalizePaths(options, paths) {
  *
  * @type {Function}
  * @param {String|Array.<String>} patterns A glob string or array of glob strings.
- * @param {Object=} options Options for `globby` module and callbacks (see below).
- * @param {Function(?String, Object)} callback Reduce method responsible for generating object from modules.
+ * @param {Object=} options Options for `globby` module and callbacks.
+ * @param {Function(?String, Object)} callback
  * @return {Null}
  */
 function requireGlob(globs, options, callback) {
@@ -124,7 +124,7 @@ function requireGlob(globs, options, callback) {
  *
  * @method sync
  * @param {String|Array.<String>} patterns A glob string or array of glob strings.
- * @param {Object=} options Options for `globby` module and callbacks (see below).
+ * @param {Object=} options Options for `globby` module and callbacks.
  * @return {Object}
  * @static
  */
