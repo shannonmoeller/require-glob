@@ -1,9 +1,11 @@
 'use strict';
 
 var globby = require('globby'),
-	camelCase = require('mout/string/camelCase'),
+	path = require('path'),
+	removeNonWord = require('mout/string/removeNonWord'),
+	replaceAccents = require('mout/string/replaceAccents'),
 	set = require('mout/object/set'),
-	path = require('path');
+	upperCase = require('mout/string/upperCase');
 
 function getRootDir(filePath) {
 	var index = filePath.indexOf('/');
@@ -57,10 +59,20 @@ function mapper(filePath, i, filePaths) {
 	};
 }
 
+function changeCase(str) {
+	str = replaceAccents(str);
+	str = str.replace(/[\.-]/g, ' ');
+	str = removeNonWord(str);
+
+	return str
+		.replace(/\s[a-z]/g, upperCase)
+		.replace(/\s+/g, '');
+}
+
 function reducer(result, file) {
 	var keyPath = file.shortPath
 		.split('/')
-		.map(camelCase)
+		.map(changeCase)
 		.join('.');
 
 	set(result, keyPath, file.exports);

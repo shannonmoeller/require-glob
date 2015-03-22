@@ -44,10 +44,12 @@ describe('require-glob e2e', function () {
 				b: {
 					b1: 'b1',
 					b2: 'b2',
-					bBB: {
-						bb1: 'bb1',
-						bb2: 'bb2'
+					// jscs:disable
+					b_bB: { // jshint ignore:line
+						_bB1: '_b.b1',
+						bB2: 'b.b2'
 					}
+					// jscs:enable
 				}
 			});
 
@@ -84,10 +86,12 @@ describe('require-glob e2e', function () {
 				b: {
 					b1: 'b1',
 					b2: 'b2',
-					bBB: {
-						bb1: 'bb1',
-						bb2: 'bb2'
+					// jscs:disable
+					b_bB: { // jshint ignore:line
+						_bB1: '_b.b1',
+						bB2: 'b.b2'
 					}
+					// jscs:enable
 				}
 			});
 		});

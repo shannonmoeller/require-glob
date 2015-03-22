@@ -23,7 +23,7 @@ Requires multiple modules using glob patterns. Supports exclusions.
 ├── cake.js
 └── rainbow/
     ├── red-orange.js
-    ├── yellow_green.js
+    ├── _yellow_green.js
     └── BluePurple.js
 ```
 
@@ -36,8 +36,8 @@ requireGlob(['**/*.js', '!cake.js'], function (err, modules) {
     //     unicorn: [Object object],
     //     rainbow: {
     //         redOrange: [Object object],
-    //         yellowGreen: [Object object],
-    //         bluePurple: [Object object]
+    //         _yellow_green: [Object object],
+    //         BluePurple: [Object object]
     //     }
     // }
 });
@@ -59,7 +59,7 @@ The mapper is reponsible for requiring the globbed modules. The default mapper r
 [
     'unicorn.js',
     'rainbow/red-orange.js',
-    'rainbow/yellow_green.js',
+    'rainbow/_yellow_green.js',
     'rainbow/BluePurple.js',
 ]
 
@@ -80,9 +80,9 @@ The mapper is reponsible for requiring the globbed modules. The default mapper r
     },
     {
         cwd: '/home/jdoe/my-module',
-        path: '/home/jdoe/my-module/rainbow/yellow_green.js',
-        shortPath: 'rainbow/yellow_green.js',
-        exports: require('./rainbow/yellow_green')
+        path: '/home/jdoe/my-module/rainbow/_yellow_green.js',
+        shortPath: 'rainbow/_yellow_green.js',
+        exports: require('./rainbow/_yellow_green')
     },
     {
         cwd: '/home/jdoe/my-module',
@@ -95,7 +95,7 @@ The mapper is reponsible for requiring the globbed modules. The default mapper r
 
 ### `reducer` `Function(result, file, i, files) : result`
 
-The reducer is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. Directory names and file names are converted to `camelCase` and path separators determine the nesting.
+The reducer is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. Hyphenated and dot-separated sections of directory names and file names are converted to `camelCase`. Path separators determine object nesting.
 
 ```js
 // mapper example is reduced to
@@ -104,8 +104,8 @@ The reducer is responsible for generating the final object structure. The defaul
     unicorn: require('./unicorn'),
     rainbow: {
         redOrange: require('./rainbow/red-orange'),
-        yellowGreen: require('./rainbow/yellow_green'),
-        bluePurple: require('./rainbow/BluePurple'),
+        _yellow_green: require('./rainbow/_yellow_green'),
+        BluePurple: require('./rainbow/BluePurple'),
     }
 }
 ```
