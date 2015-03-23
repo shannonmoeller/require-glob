@@ -32,15 +32,23 @@ var requireGlob = require('require-glob');
 
 requireGlob(['**/*.js', '!cake.js'], function (err, modules) {
     console.log(modules);
-    // {
-    //     unicorn: [Object object],
-    //     rainbow: {
-    //         redOrange: [Object object],
-    //         _yellow_green: [Object object],
-    //         BluePurple: [Object object]
-    //     }
-    // }
 });
+
+// or
+
+var modules = requireGlob.sync(['**/*.js', '!cake.js']);
+console.log(modules);
+```
+
+```
+{
+    unicorn: [Object object],
+    rainbow: {
+        redOrange: [Object object],
+        _yellow_green: [Object object],
+        BluePurple: [Object object]
+    }
+}
 ```
 
 ## Options
