@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "description": "Require multiple modules using glob patterns. Supports exclusions.",
   "keywords": [
+    "dir",
     "directory",
     "directories",
     "file",
     "files",
     "glob",
     "globs",
+    "map",
+    "mapreduce",
     "multi",
     "multiple",
+    "reduce",
     "require",
     "tree"
   ],
