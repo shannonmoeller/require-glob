@@ -56,8 +56,7 @@ If `patterns` is not a string or an array, the value will be passed through as-i
 ```js
 var option = requireGlob.sync({ foo: 'bar' });
 
-console.log(option);
-// { foo: 'bar' }
+console.log(option); // -> { foo: 'bar' }
 ```
 
 ## Options
