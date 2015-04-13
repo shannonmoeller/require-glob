@@ -83,36 +83,56 @@ function reducer(result, file) {
 function normalizeOptions(options) {
 	options = options || {};
 
-	var cwd = options.cwd || process.cwd(),
-		context = { cwd: cwd };
+	options.cwd = options.cwd || process.cwd();
+	options.mapper = (options.mapper || mapper).bind(options);
+	options.reducer = (options.reducer || reducer).bind(options);
 
-	return {
-		mapper: (options.mapper || mapper).bind(context),
-		reducer: (options.reducer || reducer).bind(context)
-	};
+	return options;
 }
 
-function normalizePaths(options, paths) {
-	options = normalizeOptions(options);
-
+function normalizePaths(paths, options) {
 	return paths
 		.map(options.mapper)
 		.reduce(options.reducer, {});
+}
+
+function normalizePatterns(patterns, options) {
+	if (typeof patterns === 'function') {
+		return patterns(options);
+	}
+
+	return patterns;
+}
+
+function isGlob(patterns) {
+	return typeof patterns === 'string' || Array.isArray(patterns);
 }
 
 /**
  * Requires multiple modules using glob patterns. Supports exclusions.
  *
  * @type {Function}
- * @param {String|Array.<String>} patterns A glob string or array of glob strings.
+ * @param {String|Array.<String>|Function|*} patterns A glob string, array of
+ *   glob strings, or a function that will return either. If not a string or
+ *   an array, value will be returned as-is.
  * @param {Object=} options Options for `globby` module and callbacks.
  * @param {Function(?String, Object)} callback
  * @return {Null}
  */
 function requireGlob(patterns, options, callback) {
+	// Make `options` optional
 	if (arguments.length === 2) {
 		callback = options;
 		options = null;
+	}
+
+	options = normalizeOptions(options);
+	patterns = normalizePatterns(patterns, options);
+
+	// If patterns isn't a glob, act as a pass-through
+	if (!isGlob(patterns)) {
+		callback(null, patterns);
+		return;
 	}
 
 	globby(patterns, options, function (err, paths) {
@@ -122,7 +142,7 @@ function requireGlob(patterns, options, callback) {
 				throw err;
 			}
 
-			callback(null, normalizePaths(options, paths));
+			callback(null, normalizePaths(paths, options));
 		}
 		catch (err) {
 			// istanbul ignore next
@@ -135,15 +155,25 @@ function requireGlob(patterns, options, callback) {
  * Syncronous version of the above.
  *
  * @method sync
- * @param {String|Array.<String>} patterns A glob string or array of glob strings.
+ * @param {String|Array.<String>|Function|*} patterns A glob string, array of
+ *   glob strings, or a function that will return either. If not a string or
+ *   an array, value will be returned as-is.
  * @param {Object=} options Options for `globby` module and callbacks.
  * @return {Object}
  * @static
  */
 requireGlob.sync = function (patterns, options) {
+	options = normalizeOptions(options);
+	patterns = normalizePatterns(patterns, options);
+
+	// If patterns isn't a glob, act as a pass-through
+	if (!isGlob(patterns)) {
+		return patterns;
+	}
+
 	var paths = globby.sync(patterns, options);
 
-	return normalizePaths(options, paths);
+	return normalizePaths(paths, options);
 };
 
 module.exports = requireGlob;
