@@ -81,7 +81,7 @@ function reducer(result, file) {
 }
 
 function normalizeOptions(options) {
-	options = options || {};
+	options = Object.create(options || {});
 
 	options.cwd = options.cwd || process.cwd();
 	options.mapper = (options.mapper || mapper).bind(options);
