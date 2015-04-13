@@ -32,15 +32,23 @@ var requireGlob = require('require-glob');
 
 requireGlob(['**/*.js', '!cake.js'], function (err, modules) {
     console.log(modules);
-    // {
-    //     unicorn: [Object object],
-    //     rainbow: {
-    //         redOrange: [Object object],
-    //         _yellow_green: [Object object],
-    //         BluePurple: [Object object]
-    //     }
-    // }
 });
+
+// or
+
+var modules = requireGlob.sync(['**/*.js', '!cake.js']);
+console.log(modules);
+```
+
+```
+{
+    unicorn: [Object object],
+    rainbow: {
+        redOrange: [Object object],
+        _yellow_green: [Object object],
+        BluePurple: [Object object]
+    }
+}
 ```
 
 If `patterns` is not a string or an array, the value will be passed through as-is. This makes it easy to have `requireGlob` handle an option value in your own modules.
