@@ -14,7 +14,7 @@ Requires multiple modules using glob patterns. Supports exclusions.
 
 ### `requireGlob.sync(patterns, [options]) : Object`
 
-- `patterns` `{String|Array.<String>}` - A glob string or array of glob strings.
+- `patterns` `{String|Array.<String>|Function}` - A glob string, array of glob strings, or a function that will return either.
 - `options` `{Object=}` - Options for `globby` module and callbacks (see below).
 - `callback` `{Function(?String, Object)}`
 
@@ -41,6 +41,15 @@ requireGlob(['**/*.js', '!cake.js'], function (err, modules) {
     //     }
     // }
 });
+```
+
+If `patterns` is not a string or an array, the value will be passed through as-is. This makes it easy to have `requireGlob` handle an option value in your own modules.
+
+```js
+var option = requireGlob.sync({ foo: 'bar' });
+
+console.log(option);
+// { foo: 'bar' }
 ```
 
 ## Options
