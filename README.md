@@ -61,9 +61,13 @@ console.log(option); // -> { foo: 'bar' }
 
 ## Options
 
-All options are inherited from [`globby`][globby] with two additions.
+All options are inherited from [`globby`][globby] with three additions.
 
 [globby]: https://www.npmjs.com/package/globby
+
+### `bustCache` `{Boolean}` (default: `false`)
+
+Whether to force the reload of a module by deleting it from the cache. Useful inside watch tasks.
 
 ### `mapper` `Function(filePath, i, filePaths) : Object`
 

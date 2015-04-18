@@ -1,15 +1,15 @@
 'use strict';
 
 var requireGlob = require('../index'),
-	expect = require('expect.js'),
+	expect = require('expect'),
 	path = require('path');
 
 describe('require-glob e2e', function () {
 	it('should handle empty match sets', function (done) {
 		requireGlob('test/fixtures/null/**/*.js', function (err, modules) {
-			expect(err).to.be(null);
+			expect(err).toBe(null);
 
-			expect(modules).to.eql({});
+			expect(modules).toEqual({});
 
 			done();
 		});
@@ -17,13 +17,13 @@ describe('require-glob e2e', function () {
 
 	it('should require shallow modules', function (done) {
 		requireGlob('test/fixtures/shallow/**/*.js', function (err, modules) {
-			expect(err).to.be(null);
+			expect(err).toBe(null);
 
-			expect(modules).to.eql({
+			expect(modules).toEqual({
 				a: 'a',
 				b: 'b',
 				c: 'c',
-				d: 'd'
+				d: { e: 'f' }
 			});
 
 			done();
@@ -34,9 +34,9 @@ describe('require-glob e2e', function () {
 		var cwd = path.resolve(process.cwd(), 'test/fixtures/deep');
 
 		requireGlob('**/*.js', { cwd: cwd }, function (err, modules) {
-			expect(err).to.be(null);
+			expect(err).toBe(null);
 
-			expect(modules).to.eql({
+			expect(modules).toEqual({
 				a: {
 					a1: 'a1',
 					a2: 'a2'
@@ -63,13 +63,13 @@ describe('require-glob e2e', function () {
 		}
 
 		requireGlob(generateGlob, function (err, modules) {
-			expect(err).to.be(null);
+			expect(err).toBe(null);
 
-			expect(modules).to.eql({
+			expect(modules).toEqual({
 				a: 'a',
 				b: 'b',
 				c: 'c',
-				d: 'd'
+				d: { e: 'f' }
 			});
 
 			done();
@@ -80,14 +80,14 @@ describe('require-glob e2e', function () {
 		var obj = { foo: 'bar' };
 
 		requireGlob(obj, function (err, modules) {
-			expect(modules).to.be(obj);
+			expect(modules).toBe(obj);
 			done();
 		});
 	});
 
 	it('should pass-through null', function (done) {
 		requireGlob(null, function (err, modules) {
-			expect(modules).to.be(null);
+			expect(modules).toBe(null);
 			done();
 		});
 	});
@@ -96,24 +96,24 @@ describe('require-glob e2e', function () {
 		it('should handle empty match sets', function () {
 			var modules = requireGlob.sync('test/fixtures/null/**/*.js');
 
-			expect(modules).to.eql({});
+			expect(modules).toEqual({});
 		});
 
 		it('should require shallow modules', function () {
 			var modules = requireGlob.sync('test/fixtures/shallow/**/*.js');
 
-			expect(modules).to.eql({
+			expect(modules).toEqual({
 				a: 'a',
 				b: 'b',
 				c: 'c',
-				d: 'd'
+				d: { e: 'f' }
 			});
 		});
 
 		it('should require deep modules', function () {
 			var modules = requireGlob.sync('test/fixtures/deep/**/*.js');
 
-			expect(modules).to.eql({
+			expect(modules).toEqual({
 				a: {
 					a1: 'a1',
 					a2: 'a2'
@@ -136,22 +136,33 @@ describe('require-glob e2e', function () {
 				return 'test/fixtures/shallow/**/*.js';
 			}
 
-			expect(requireGlob.sync(generateGlob)).to.eql({
+			expect(requireGlob.sync(generateGlob)).toEqual({
 				a: 'a',
 				b: 'b',
 				c: 'c',
-				d: 'd'
+				d: { e: 'f' }
 			});
 		});
 
 		it('should pass-through objects', function () {
 			var obj = { foo: 'bar' };
 
-			expect(requireGlob.sync(obj)).to.be(obj);
+			expect(requireGlob.sync(obj)).toBe(obj);
 		});
 
 		it('should pass-through null', function () {
-			expect(requireGlob.sync(null)).to.be(null);
+			expect(requireGlob.sync(null)).toBe(null);
+		});
+
+		it('should allow cache busting', function () {
+			var a = requireGlob.sync('test/fixtures/shallow/**/*.js'),
+				b = requireGlob.sync('test/fixtures/shallow/**/*.js'),
+				c = requireGlob.sync('test/fixtures/shallow/**/*.js', { bustCache: true }),
+				d = requireGlob.sync('test/fixtures/shallow/**/*.js');
+
+			expect(a.d).toBe(b.d);
+			expect(b.d).toNotBe(c.d);
+			expect(c.d).toBe(d.d);
 		});
 	});
 });

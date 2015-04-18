@@ -47,15 +47,21 @@ function trimPaths(paths) {
 function mapper(filePath, i, filePaths) {
 	// jshint validthis:true
 	var cwd = this.cwd,
+		resolvedPath = path.resolve(cwd, filePath),
 		shortPaths = this.shortPaths || (
 			this.shortPaths = trimPaths(filePaths) // run once and cache
 		);
+
+	if (this.bustCache) {
+		resolvedPath = require.resolve(resolvedPath);
+		delete require.cache[resolvedPath];
+	}
 
 	return {
 		cwd: cwd,
 		path: filePath,
 		shortPath: shortPaths[i],
-		exports: require(path.resolve(cwd, filePath))
+		exports: require(resolvedPath)
 	};
 }
 

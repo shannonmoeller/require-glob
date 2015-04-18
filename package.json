@@ -1,6 +1,6 @@
 {
   "name": "require-glob",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Require multiple modules using glob patterns. Supports exclusions.",
   "keywords": [
     "dir",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
-    "expect.js": "^0.3.1",
+    "expect": "^1.6.0",
     "gulp": "^3.8.11",
     "gulp-istanbul": "^0.8.1",
     "gulp-jscs": "^1.5.1",
