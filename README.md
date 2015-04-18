@@ -69,7 +69,7 @@ All options are inherited from [`globby`][globby] with three additions.
 
 Whether to force the reload of a module by deleting it from the cache. Useful inside watch tasks.
 
-### `mapper` `Function(filePath, i, filePaths) : Object`
+### `mapper` `{Function(filePath, i, filePaths) : file}`
 
 The mapper is reponsible for requiring the globbed modules. The default mapper returns an object containing path information and the result of requiring the module.
 
@@ -113,7 +113,7 @@ The mapper is reponsible for requiring the globbed modules. The default mapper r
 ]
 ```
 
-### `reducer` `Function(result, file, i, files) : result`
+### `reducer` `{Function(result, file, i, files) : result}`
 
 The reducer is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. Hyphenated and dot-separated sections of directory names and file names are converted to `camelCase`. Path separators determine object nesting.
 
