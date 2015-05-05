@@ -122,6 +122,9 @@ function isGlob(patterns) {
  *   glob strings, or a function that will return either. If not a string or
  *   an array, value will be returned as-is.
  * @param {Object=} options Options for `globby` module and callbacks.
+ * @param {Boolean=} options.bustCache Whether to force the reload of modules by deleting them from the cache.
+ * @param {Function=} options.mapper Custom mapper.
+ * @param {Function=} options.reducer Custom reducer.
  * @param {Function(?String, Object)} callback
  * @return {Null}
  */
@@ -161,10 +164,8 @@ function requireGlob(patterns, options, callback) {
  * Syncronous version of the above.
  *
  * @method sync
- * @param {String|Array.<String>|Function|*} patterns A glob string, array of
- *   glob strings, or a function that will return either. If not a string or
- *   an array, value will be returned as-is.
- * @param {Object=} options Options for `globby` module and callbacks.
+ * @param {String|Array.<String>|Function|*} patterns Same as async method.
+ * @param {Object=} options Same as async method.
  * @return {Object}
  * @static
  */
