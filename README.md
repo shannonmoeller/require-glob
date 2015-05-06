@@ -115,7 +115,7 @@ The mapper is reponsible for requiring the globbed modules. The default mapper r
 
 ### `reducer` `{Function(result, file, i, files) : result}`
 
-The reducer is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. Hyphenated and dot-separated sections of directory names and file names are converted to `camelCase`. Path separators determine object nesting.
+The reducer is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. The object structure is determined by the `keygen`.
 
 ```js
 // mapper example is reduced to
@@ -129,6 +129,10 @@ The reducer is responsible for generating the final object structure. The defaul
     }
 }
 ```
+
+### `keygen` `{Function(file) : String}`
+
+The keygen is responsible for generating a unique key for every module. It is used by the default reducer to generate the final object structure. The default keygen converts hyphenated and dot-separated sections of directory names and file names to `camelCase`. Path separators determine object nesting.
 
 ## Contribute
 
