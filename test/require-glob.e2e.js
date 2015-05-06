@@ -1,3 +1,4 @@
+/*eslint-env mocha */
 'use strict';
 
 var requireGlob = require('../index'),
@@ -44,12 +45,10 @@ describe('require-glob e2e', function () {
 				b: {
 					b1: 'b1',
 					b2: 'b2',
-					// jscs:disable
-					b_bB: { // jshint ignore:line
+					b_bB: { // eslint-disable-line camelcase
 						_bB1: '_b.b1',
 						bB2: 'b.b2'
 					}
-					// jscs:enable
 				}
 			});
 
@@ -80,6 +79,7 @@ describe('require-glob e2e', function () {
 		var obj = { foo: 'bar' };
 
 		requireGlob(obj, function (err, modules) {
+			if (err) throw err;
 			expect(modules).toBe(obj);
 			done();
 		});
@@ -87,6 +87,7 @@ describe('require-glob e2e', function () {
 
 	it('should pass-through null', function (done) {
 		requireGlob(null, function (err, modules) {
+			if (err) throw err;
 			expect(modules).toBe(null);
 			done();
 		});
@@ -121,12 +122,10 @@ describe('require-glob e2e', function () {
 				b: {
 					b1: 'b1',
 					b2: 'b2',
-					// jscs:disable
-					b_bB: { // jshint ignore:line
+					b_bB: { // eslint-disable-line camelcase
 						_bB1: '_b.b1',
 						bB2: 'b.b2'
 					}
-					// jscs:enable
 				}
 			});
 		});

@@ -75,21 +75,24 @@ function changeCase(str) {
 		.replace(/\s+/g, '');
 }
 
-function reducer(result, file) {
-	var keyPath = file.shortPath
+function keygen(file) {
+	return file.shortPath
 		.split('/')
 		.map(changeCase)
 		.join('.');
+}
 
-	set(result, keyPath, file.exports);
+function reducer(result, file) {
+	// jshint validthis:true
+	set(result, this.keygen(file), file.exports);
 
 	return result;
 }
 
 function normalizeOptions(options) {
-	options = Object.create(options || {});
-
+	options = options || {};
 	options.cwd = options.cwd || process.cwd();
+	options.keygen = (options.keygen || keygen).bind(options);
 	options.mapper = (options.mapper || mapper).bind(options);
 	options.reducer = (options.reducer || reducer).bind(options);
 
@@ -125,6 +128,7 @@ function isGlob(patterns) {
  * @param {Boolean=} options.bustCache Whether to force the reload of modules by deleting them from the cache.
  * @param {Function=} options.mapper Custom mapper.
  * @param {Function=} options.reducer Custom reducer.
+ * @param {Function=} options.keygen Custom key generator.
  * @param {Function(?String, Object)} callback
  * @return {Null}
  */
@@ -153,9 +157,9 @@ function requireGlob(patterns, options, callback) {
 
 			callback(null, normalizePaths(paths, options));
 		}
-		catch (err) {
+		catch (e) {
 			// istanbul ignore next
-			callback(err);
+			callback(e);
 		}
 	});
 }
