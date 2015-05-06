@@ -90,7 +90,8 @@ function reducer(result, file) {
 }
 
 function normalizeOptions(options) {
-	options = options || {};
+	options = Object.create(options || {});
+
 	options.cwd = options.cwd || process.cwd();
 	options.keygen = (options.keygen || keygen).bind(options);
 	options.mapper = (options.mapper || mapper).bind(options);
