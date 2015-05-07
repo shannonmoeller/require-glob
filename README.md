@@ -154,7 +154,7 @@ Licensed under [MIT](http://shannonmoeller.com/mit.txt)
 [coveralls-url]: https://coveralls.io/r/shannonmoeller/require-glob
 [downloads-img]: http://img.shields.io/npm/dm/require-glob.svg?style=flat-square
 [gitter-img]:    http://img.shields.io/badge/gitter-join_chat-1dce73.svg?style=flat-square
-[gitter-url]:    https://gitter.im/shannonmoeller/require-glob
+[gitter-url]:    https://gitter.im/shannonmoeller/shannonmoeller
 [gittip-img]:    http://img.shields.io/gittip/shannonmoeller.svg?style=flat-square
 [gittip-url]:    https://www.gittip.com/shannonmoeller
 [npm-img]:       http://img.shields.io/npm/v/require-glob.svg?style=flat-square
