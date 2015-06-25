@@ -61,7 +61,7 @@ console.log(option); // -> { foo: 'bar' }
 
 ## Options
 
-All options are inherited from [`globby`][globby] with three additions.
+All options are inherited from [`globby`][globby] with these additions:
 
 [globby]: https://www.npmjs.com/package/globby
 
