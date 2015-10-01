@@ -66,7 +66,7 @@ console.log(option); // -> { foo: 'bar' }
 - [`reducer` `{Function(result, file, i, files) : result}`](#reducer-function-result-file-i-files-result)
 - [`keygen` `{Function(file) : String}`](#keygen-function-file-string)
 
-All options are inherited from [`globby`][globby] with three additions.
+All options are inherited from [`globby`][globby] with these additions:
 
 [globby]: https://www.npmjs.com/package/globby
 
