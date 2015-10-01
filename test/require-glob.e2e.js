@@ -1,5 +1,4 @@
-/*eslint-env mocha */
-'use strict';
+/* eslint-env mocha */
 
 var requireGlob = require('../index'),
 	expect = require('expect'),

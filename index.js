@@ -1,5 +1,3 @@
-'use strict';
-
 var globby = require('globby'),
 	path = require('path'),
 	removeNonWord = require('mout/string/removeNonWord'),
@@ -149,13 +147,8 @@ function requireGlob(patterns, options, callback) {
 		return;
 	}
 
-	globby(patterns, options, function (err, paths) {
+	globby(patterns, options).then(function (paths) {
 		try {
-			// istanbul ignore if
-			if (err) {
-				throw err;
-			}
-
 			callback(null, normalizePaths(paths, options));
 		}
 		catch (e) {
