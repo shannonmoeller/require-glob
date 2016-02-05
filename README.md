@@ -69,7 +69,7 @@ The current working directory in which to search. Defaults to the `__dirname` of
 
 Type: `{String}` (default: common non-glob parent)
 
-Default is everything before the first glob starts in the first pattern (see [glob-parent][parent]).
+Default is everything before the first glob starts in the first pattern (see [`glob-parent`][parent]).
 
 [parent]: https://github.com/es128/glob-parent#usage
 
