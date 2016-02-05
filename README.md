@@ -55,7 +55,7 @@ Type: `{Object}` (optional)
 
 This object is ultimately passed directly to [`node-glob`][glob] so check there for more options.
 
-[glob]: https://github.com/isaacs/node-glob
+[glob]: https://github.com/isaacs/node-glob#usage
 
 ## Options
 
@@ -71,7 +71,7 @@ Type: `{String}` (default: common non-glob parent)
 
 Default is everything before the first glob starts in the first pattern (see [glob-parent][parent]).
 
-[parent]: https://github.com/es128/glob-parent
+[parent]: https://github.com/es128/glob-parent#usage
 
 ```js
 requireGlob(['./src/**', './lib/**'], { cwd: '/home/jdoe/my-module' });
