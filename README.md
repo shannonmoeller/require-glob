@@ -59,12 +59,6 @@ All options are inherited from [`globby`][globby] plus those listed below.
 
 ## Options
 
-- [`bustCache` `{Boolean}` (default: `false`)](#bustcache)
-- [`cwd` `{String}` (default: `__dirname`)](#cwd)
-- [`mapper` `{Function(filePath, i, filePaths) : file}`](#mapper)
-- [`reducer` `{Function(results, file, i, files) : results}`](#reducer)
-- [`keygen` `{Function(file) : String}`](#keygen)
-
 ### bustCache
 
 Type: `{Boolean}` (default: `false`)
