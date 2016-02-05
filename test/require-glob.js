@@ -6,16 +6,16 @@ test('should require no modules', async assert => {
 	const noneA = await requireGlob('./fixtures/bogu*.js');
 	const noneB = requireGlob.sync('./fixtures/bogu*.js');
 
-	assert.same(noneA, {}, 'async');
-	assert.same(noneB, {}, 'sync');
+	assert.same(noneA, {});
+	assert.same(noneB, {});
 });
 
 test('should require a module', async assert => {
 	const oneA = await requireGlob('./fixtures/rand*.js');
 	const oneB = requireGlob.sync('./fixtures/rand*.js');
 
-	assert.same(typeof oneA.random, 'number', 'async');
-	assert.same(typeof oneB.random, 'number', 'sync');
+	assert.same(typeof oneA.random, 'number');
+	assert.same(typeof oneB.random, 'number');
 });
 
 test('should require multiple modules', async assert => {
@@ -30,8 +30,8 @@ test('should require multiple modules', async assert => {
 		}
 	};
 
-	assert.same(shallowA, expected, 'async');
-	assert.same(shallowB, expected, 'sync');
+	assert.same(shallowA, expected);
+	assert.same(shallowB, expected);
 });
 
 test('should require nested modules', async assert => {
@@ -52,8 +52,8 @@ test('should require nested modules', async assert => {
 		}
 	};
 
-	assert.same(deepA, expected, 'async');
-	assert.same(deepB, expected, 'sync');
+	assert.same(deepA, expected);
+	assert.same(deepB, expected);
 });
 
 test('should bust cache', async assert => {

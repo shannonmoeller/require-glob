@@ -17,7 +17,7 @@ function toCamelCase(value) {
 }
 
 function toCombinedValues(a, b) {
-	return [].concat(a, b);
+	return a.concat(b);
 }
 
 function toCommonFirstValue(a, b) {
@@ -44,11 +44,7 @@ function toSplitPath(filePath) {
 	return filePath.split(SEPARATOR_PATTERN);
 }
 
-function toTruthy(value) {
-	return Boolean(value);
-}
-
-// Map
+// Mapper
 
 function resolvePaths(cwd, paths) {
 	return paths.map(toResolvedPath.bind(null, cwd));
@@ -93,7 +89,7 @@ function mapper(filePath, i, filePaths) {
 	};
 }
 
-// Reduce
+// Reducer
 
 function keygen(file) {
 	var parsedPath = path.parse(file.shortPath);
@@ -101,7 +97,7 @@ function keygen(file) {
 	return [parsedPath.dir, parsedPath.name]
 		.map(toSplitPath)
 		.reduce(toCombinedValues)
-		.filter(toTruthy)
+		.filter(Boolean)
 		.map(toCamelCase);
 }
 
@@ -113,6 +109,14 @@ function reducer(tree, file) {
 	obj[lastKey] = file.exports;
 
 	return tree;
+}
+
+// Map Reduce
+
+function mapReduce(options, filePaths) {
+	return filePaths
+		.map(options.mapper)
+		.reduce(options.reducer, {});
 }
 
 // API
@@ -127,17 +131,12 @@ function normalizeOptions(options) {
 	};
 
 	options = assign(defaults, options);
+
 	options.keygen = options.keygen.bind(options);
 	options.mapper = options.mapper.bind(options);
 	options.reducer = options.reducer.bind(options);
 
 	return options;
-}
-
-function mapReduce(options, filePaths) {
-	return filePaths
-		.map(options.mapper)
-		.reduce(options.reducer, {});
 }
 
 /**
