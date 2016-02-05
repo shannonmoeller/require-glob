@@ -65,11 +65,6 @@ Type: `{String}` (default: `__dirname`)
 
 The current working directory in which to search. Defaults to the `__dirname` of the requiring module so relative paths work the same as Node.js's require.
 
-```js
-requireGlob('./sibling/dir/**/*.js').then(function (modules) { ... });
-requireGlob('../../some/cousin/dir/**/*.js').then(function (modules) { ... });
-```
-
 ### base
 
 Type: `{String}` (default: common non-glob parent)
@@ -77,11 +72,6 @@ Type: `{String}` (default: common non-glob parent)
 The common parent of matched files. Default is everything before a glob starts (see [glob-parent][parent]).
 
 [parent]: https://github.com/es128/glob-parent
-
-```js
-requireGlob('./sibling/dir/**/*.js').then(function (modules) { ... });
-requireGlob('../../some/cousin/dir/**/*.js').then(function (modules) { ... });
-```
 
 ### bustCache
 
