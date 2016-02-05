@@ -37,7 +37,7 @@ requireGlob(['**/*.js', '!cake.js']).then(function (modules) {
 
 ## API
 
-### requireGlob(patterns [, options]): Promise.<Object>
+### requireGlob(patterns [, options]): Promise
 
 ### requireGlob.sync(patterns [, options]): Object
 
