@@ -2,22 +2,13 @@
 
 [![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Chat][gitter-img]][gitter-url] [![Tip][amazon-img]][amazon-url]
 
-Requires multiple modules using glob patterns. Supports exclusions.
+Requires multiple modules using glob patterns and combines them into a nested object. Supports exclusions.
 
 ## Install
 
-    $ npm install --save-dev require-glob
+    $ npm install --save require-glob
 
-## Api
-
-### `requireGlob(patterns [, options]) : Promise.<Object>`
-
-### `requireGlob.sync(patterns [, options]) : Object`
-
-- `patterns` `{String|Array.<String>}` - See supported `minimatch` glob  [patterns][minimatch].
-- `options` `{Object=}` - Options for `globby` module and callbacks (see below).
-
-[minimatch]: https://github.com/isaacs/minimatch#usage
+## Usage
 
 ```
 ┣━ unicorn.js
@@ -33,25 +24,40 @@ var requireGlob = require('require-glob');
 
 requireGlob(['**/*.js', '!cake.js']).then(function (modules) {
     console.log(modules);
+    // {
+    //     unicorn: [Object object],
+    //     rainbow: {
+    //         redOrange: [Object object],
+    //         _yellow_green: [Object object],
+    //         BluePurple: [Object object]
+    //     }
+    // }
 });
 ```
 
-```
-{
-    unicorn: [Object object],
-    rainbow: {
-        redOrange: [Object object],
-        _yellow_green: [Object object],
-        BluePurple: [Object object]
-    }
-}
-```
+## API
 
-#### Options
+### requireGlob(patterns [, options]): Promise.<Object>
 
-All options are inherited from [`globby`][globby] with these additions:
+### requireGlob.sync(patterns [, options]): Object
+
+#### patterns
+
+Type: `{String|Array.<String>}`
+
+See supported `minimatch` glob  [patterns][minimatch].
+
+[minimatch]: https://github.com/isaacs/minimatch#usage
+
+#### options
+
+Type: `{Object=}`
+
+All options are inherited from [`globby`][globby] plus those listed below.
 
 [globby]: https://github.com/sindresorhus/globby#api
+
+## Options
 
 - [`bustCache` `{Boolean}` (default: `false`)](#bustcache)
 - [`cwd` `{String}` (default: `__dirname`)](#cwd)
@@ -59,24 +65,24 @@ All options are inherited from [`globby`][globby] with these additions:
 - [`reducer` `{Function(results, file, i, files) : results}`](#reducer)
 - [`keygen` `{Function(file) : String}`](#keygen)
 
-### `bustCache`
+### bustCache
 
 Type: `{Boolean}` (default: `false`)
 
 Whether to force the reload of modules by deleting them from the cache. Useful inside watch tasks.
 
-### `cwd`
+### cwd
 
 Type: `{String}` (default: `__dirname`)
 
 The current working directory in which to search. Defaults to the `__dirname` of the requiring module so relative paths work as you would expect.
 
 ```js
-requireGlob('sibling/dir/**/*.js').then(function (modules) { ... });
+requireGlob('./sibling/dir/**/*.js').then(function (modules) { ... });
 requireGlob('../../some/cousin/dir/**/*.js').then(function (modules) { ... });
 ```
 
-### `mapper`
+### mapper
 
 Type: `{Function(filePath, i, filePaths) : file}`
 
@@ -123,7 +129,7 @@ The mapper is reponsible for requiring the globbed modules. The default mapper r
 ]
 ```
 
-### `reducer`
+### reducer
 
 Type: `{Function(results, file, i, files) : results}`
 
@@ -142,7 +148,7 @@ The reducer is responsible for generating the final object structure. The defaul
 }
 ```
 
-### `keygen`
+### keygen
 
 Type: `{Function(file) : String|Array.<String>}`
 
