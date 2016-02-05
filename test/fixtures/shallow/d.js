@@ -1,2 +1,2 @@
 'use strict';
-module.exports = { e: 'f' };
+module.exports = { e: 'e' };

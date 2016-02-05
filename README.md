@@ -2,7 +2,7 @@
 
 [![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Chat][gitter-img]][gitter-url] [![Tip][amazon-img]][amazon-url]
 
-Requires multiple modules using glob patterns and combines them into a nested object. Supports exclusions.
+Requires multiple modules using glob patterns and combines them into a nested object.
 
 ## Install
 
@@ -45,19 +45,43 @@ requireGlob(['**/*.js', '!cake.js']).then(function (modules) {
 
 Type: `{String|Array.<String>}`
 
-See supported `minimatch` glob  [patterns][minimatch].
+One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
 
 [minimatch]: https://github.com/isaacs/minimatch#usage
 
 #### options
 
-Type: `{Object=}`
+Type: `{Object}` (optional)
 
-All options are inherited from [`globby`][globby] plus those listed below.
+This object is ultimately passed directly to [`node-glob`][glob] so check there for more options.
 
-[globby]: https://github.com/sindresorhus/globby#api
+[glob]: https://github.com/isaacs/node-glob
 
 ## Options
+
+### cwd
+
+Type: `{String}` (default: `__dirname`)
+
+The current working directory in which to search. Defaults to the `__dirname` of the requiring module so relative paths work the same as Node.js's require.
+
+```js
+requireGlob('./sibling/dir/**/*.js').then(function (modules) { ... });
+requireGlob('../../some/cousin/dir/**/*.js').then(function (modules) { ... });
+```
+
+### base
+
+Type: `{String}` (default: common non-glob parent)
+
+The common parent of matched files. Default is everything before a glob starts (see [glob-parent][parent]).
+
+[parent]: https://github.com/es128/glob-parent
+
+```js
+requireGlob('./sibling/dir/**/*.js').then(function (modules) { ... });
+requireGlob('../../some/cousin/dir/**/*.js').then(function (modules) { ... });
+```
 
 ### bustCache
 
@@ -65,109 +89,68 @@ Type: `{Boolean}` (default: `false`)
 
 Whether to force the reload of modules by deleting them from the cache. Useful inside watch tasks.
 
-### cwd
-
-Type: `{String}` (default: `__dirname`)
-
-The current working directory in which to search. Defaults to the `__dirname` of the requiring module so relative paths work as you would expect.
-
-```js
-requireGlob('./sibling/dir/**/*.js').then(function (modules) { ... });
-requireGlob('../../some/cousin/dir/**/*.js').then(function (modules) { ... });
-```
-
 ### mapper
 
-Type: `{Function(filePath, i, filePaths) : file}`
+Type: `{Function(options, filePath, i, filePaths) : fileObject}`
 
 The mapper is reponsible for requiring the globbed modules. The default mapper returns an object containing path information and the result of requiring the module.
 
 ```js
+// given the glob
+'./src/**/*.js'
 
-// the glob result
-
+// the resulting list
 [
-    './unicorn.js',
-    './rainbow/red-orange.js',
-    './rainbow/_yellow_green.js',
-    './rainbow/BluePurple.js',
+    './src/unicorn.js',
+    './src/rainbow/red-orange.js',
+    './src/rainbow/_yellow_green.js',
+    './src/rainbow/BluePurple.js',
 ]
 
-// is mapped to
-
+// will map to
 [
     {
         cwd: '/home/jdoe/my-module',
-        path: '/home/jdoe/my-module/unicorn.js',
-        shortPath: 'unicorn.js',
-        exports: require('./unicorn')
+        base: '/home/jdoe/my-module/src',
+        path: '/home/jdoe/my-module/src/unicorn.js',
+        exports: require('./src/unicorn')
     },
     {
         cwd: '/home/jdoe/my-module',
-        path: '/home/jdoe/my-module/rainbow/red-orange.js',
-        shortPath: 'rainbow/red-orange.js',
-        exports: require('./rainbow/red-orange')
+        base: '/home/jdoe/my-module/src',
+        path: '/home/jdoe/my-module/src/rainbow/red-orange.js',
+        exports: require('./src/rainbow/red-orange')
     },
     {
         cwd: '/home/jdoe/my-module',
-        path: '/home/jdoe/my-module/rainbow/_yellow_green.js',
-        shortPath: 'rainbow/_yellow_green.js',
-        exports: require('./rainbow/_yellow_green')
+        base: '/home/jdoe/my-module/src',
+        path: '/home/jdoe/my-module/src/rainbow/_yellow_green.js',
+        exports: require('./src/rainbow/_yellow_green')
     },
     {
         cwd: '/home/jdoe/my-module',
-        path: '/home/jdoe/my-module/rainbow/BluePurple.js',
-        shortPath: 'rainbow/BluePurple.js',
-        exports: require('./rainbow/BluePurple')
+        base: '/home/jdoe/my-module/src',
+        path: '/home/jdoe/my-module/src/rainbow/BluePurple.js',
+        exports: require('./src/rainbow/BluePurple')
     }
 ]
 ```
 
 ### reducer
 
-Type: `{Function(results, file, i, files) : results}`
+Type: `{Function(resultObject, fileObject, i, fileObjects) : resultObject}`
 
-The reducer is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. The object structure is determined by the `keygen`.
+The reducer is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. Path separators determine object nesting. Directory names and file names are converted to `camelCase`. File extensions are ignored.
 
 ```js
 // mapper example is reduced to
 
 {
-    unicorn: require('./unicorn.js'),
+    unicorn: require('./src/unicorn.js'),
     rainbow: {
-        redOrange: require('./rainbow/red-orange.js'),
-        _yellow_green: require('./rainbow/_yellow_green.js'),
-        BluePurple: require('./rainbow/BluePurple.js'),
-    }
-}
-```
-
-### keygen
-
-Type: `{Function(file) : String|Array.<String>}`
-
-The default reducer uses this function to generate a unique key for every module. The default keygen converts hyphenated and dot-separated sections of directory names and the file name to `camelCase`. File extensions are ignored. Path separators determine object nesting.
-
-```js
-// given the mapped object
-{
-    shortPath: 'fooBar/bar-baz/_bat.qux.js',
-    exports: require('./fooBar/bar-baz/_bat.qux.js')
-}
-
-// the keygen will produce
-[
-    'fooBar',
-    'barBaz',
-    '_batQux'
-]
-
-// which the reducer will use to construct
-{
-    fooBar: {
-        barBaz: {
-            _batQux: require('./fooBar/bar-baz/_bat.qux.js')
-        }
+        redOrange: require('./src/rainbow/red-orange.js'),
+        _yellow_green: require('./src/rainbow/_yellow_green.js'),
+        BluePurple: require('./src/rainbow/BluePurple.js'),
     }
 }
 ```

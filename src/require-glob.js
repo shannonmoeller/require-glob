@@ -1,12 +1,11 @@
 'use strict';
 
-var assign = require('object-assign');
+var globParent = require('glob-parent');
 var globby = require('globby');
 var path = require('path');
 
 var CAMELIZE_PATTERN = /[\.\-]+(.)/g;
 var SEPARATOR_PATTERN = /[\\\/]/;
-var SEPARATOR = path.sep;
 
 // Utilities
 
@@ -20,98 +19,58 @@ function toCombinedValues(a, b) {
 	return a.concat(b);
 }
 
-function toCommonFirstValue(a, b) {
-	return a && b && a.length && b.length && a[0] === b[0] ? a : false;
-}
-
-function toJoinedPath(filePath) {
-	return filePath.join(SEPARATOR);
-}
-
 function toNestedObject(obj, key) {
 	return obj[key] || (obj[key] = {});
-}
-
-function toResolvedPath(cwd, filePath) {
-	return require.resolve(path.resolve(cwd, filePath));
-}
-
-function toShiftedPath(filePath) {
-	return filePath.slice(1);
 }
 
 function toSplitPath(filePath) {
 	return filePath.split(SEPARATOR_PATTERN);
 }
 
-// Mapper
+// Map Reduce
 
-function resolvePaths(cwd, paths) {
-	return paths.map(toResolvedPath.bind(null, cwd));
-}
+function mapper(options, filePath) {
+	var cwd = options.cwd;
+	var base = options.base;
 
-function trimPaths(paths) {
-	paths = paths.map(toSplitPath);
+	filePath = require.resolve(path.resolve(cwd, filePath));
 
-	if (paths.length === 1) {
-		return paths[0].slice(-1);
-	}
-
-	while (paths.reduce(toCommonFirstValue)) {
-		paths = paths.map(toShiftedPath);
-	}
-
-	return paths.map(toJoinedPath);
-}
-
-function mapper(filePath, i, filePaths) {
-	var cwd = this.cwd;
-
-	var resolvedPaths = this.resolvedPaths ||
-		(this.resolvedPaths = resolvePaths(cwd, filePaths));
-
-	var trimmedPaths = this.trimmedPaths ||
-		(this.trimmedPaths = trimPaths(resolvedPaths));
-
-	var resolvedPath = resolvedPaths[i];
-	var trimmedPath = trimmedPaths[i];
-
-	if (this.bustCache) {
-		delete require.cache[resolvedPath];
+	if (options.bustCache) {
+		delete require.cache[filePath];
 	}
 
 	return {
 		cwd: cwd,
-		path: resolvedPath,
-		shortPath: trimmedPath,
-		relativePath: filePath,
-		exports: require(resolvedPath)
+		base: base,
+		path: filePath,
+		exports: require(filePath)
 	};
 }
 
-// Reducer
+function reducer(options, tree, fileObj) {
+	if (!fileObj || !fileObj.path || !fileObj.hasOwnProperty('exports')) {
+		return tree;
+	}
 
-function keygen(file) {
-	var parsedPath = path.parse(file.shortPath);
-
-	return [parsedPath.dir, parsedPath.name]
+	var uniquePath = fileObj.path.replace(fileObj.base, '');
+	var parsedPath = path.parse(uniquePath);
+	var keys = [parsedPath.dir, parsedPath.name]
 		.map(toSplitPath)
 		.reduce(toCombinedValues)
-		.filter(Boolean)
-		.map(toCamelCase);
-}
+		.map(toCamelCase)
+		.filter(Boolean);
 
-function reducer(tree, file) {
-	var keys = [].concat(this.keygen(file));
+	if (!keys.length) {
+		return tree;
+	}
+
 	var lastKey = keys.pop();
 	var obj = keys.reduce(toNestedObject, tree);
 
-	obj[lastKey] = file.exports;
+	obj[lastKey] = fileObj.exports;
 
 	return tree;
 }
-
-// Map Reduce
 
 function mapReduce(options, filePaths) {
 	return filePaths
@@ -121,55 +80,29 @@ function mapReduce(options, filePaths) {
 
 // API
 
-function normalizeOptions(options) {
-	var defaults = {
-		cwd: path.dirname(module.parent.filename),
-		bustCache: false,
-		keygen: keygen,
-		mapper: mapper,
-		reducer: reducer
-	};
+function normalizeOptions(pattern, options) {
+	pattern = pattern || '';
+	options = options || {};
 
-	options = assign(defaults, options);
+	options.cwd = options.cwd || path.dirname(module.parent.filename);
+	options.base = options.base || globParent(path.resolve(options.cwd, pattern));
+	options.bustCache = options.bustCache || false;
 
-	options.keygen = options.keygen.bind(options);
-	options.mapper = options.mapper.bind(options);
-	options.reducer = options.reducer.bind(options);
+	options.mapper = (options.mapper || mapper).bind(null, options);
+	options.reducer = (options.reducer || reducer).bind(null, options);
 
 	return options;
 }
 
-/**
- * Requires multiple modules using glob patterns and returns the results as a
- * nested object. Supports exclusions.
- *
- * @type {Function}
- * @param {String|Array.<String>} pattern One or more glob patterns.
- * @param {Object=} options
- * @param {Boolean=} options.bustCache Whether to force the reload of modules.
- * @param {Boolean=} options.cwd The current working directory in which to search.
- * @param {Function=} options.mapper Optional custom map function.
- * @param {Function=} options.reducer Optional custom reduce function.
- * @param {Function=} options.keygen Optional custom key generator function.
- * @return {Promise.<Object>}
- */
 function requireGlob(pattern, options) {
-	options = normalizeOptions(options);
+	options = normalizeOptions(pattern, options);
 
 	return globby(pattern, options)
 		.then(mapReduce.bind(null, options));
 }
 
-/**
- * Synchronous version of the above.
- *
- * @method sync
- * @param {String|Array.<String>} patterns Same as async method.
- * @param {Object=} options Same as async method.
- * @return {Object}
- */
 function requireGlobSync(pattern, options) {
-	options = normalizeOptions(options);
+	options = normalizeOptions(pattern, options);
 
 	return mapReduce(options, globby.sync(pattern, options));
 }

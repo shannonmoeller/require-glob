@@ -36,6 +36,7 @@
   },
   "homepage": "https://github.com/shannonmoeller/require-glob",
   "dependencies": {
+    "glob-parent": "^2.0.0",
     "globby": "^3.0.1",
     "object-assign": "^4.0.1"
   },

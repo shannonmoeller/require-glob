@@ -3,11 +3,17 @@ import test from 'ava';
 import requireGlob from '../src/require-glob';
 
 test('should require no modules', async assert => {
-	const noneA = await requireGlob('./fixtures/bogu*.js');
-	const noneB = requireGlob.sync('./fixtures/bogu*.js');
+	const emptyA = await requireGlob();
+	const emptyB = requireGlob.sync();
 
-	assert.same(noneA, {});
-	assert.same(noneB, {});
+	assert.same(emptyA, {});
+	assert.same(emptyB, {});
+
+	const bogusA = await requireGlob('./fixtures/bogu*.js');
+	const bogusB = requireGlob.sync('./fixtures/bogu*.js');
+
+	assert.same(bogusA, {});
+	assert.same(bogusB, {});
 });
 
 test('should require a module', async assert => {
@@ -26,7 +32,7 @@ test('should require multiple modules', async assert => {
 		b: 'b',
 		c: 'c',
 		d: {
-			e: 'f'
+			e: 'e'
 		}
 	};
 
@@ -56,6 +62,58 @@ test('should require nested modules', async assert => {
 	assert.same(deepB, expected);
 });
 
+test('should use custom cwd', async assert => {
+	const deep = await requireGlob('./test/**/deep/**/*.js', {
+		cwd: path.dirname(__dirname)
+	});
+
+	const expected = {
+		fixtures: {
+			deep: {
+				a: {
+					a1: 'a1',
+					a2: 'a2'
+				},
+				b: {
+					b_bB: { // eslint-disable-line camelcase
+						_bB1: '_b.b1',
+						bB2: 'b.b2'
+					},
+					b1: 'b1',
+					b2: 'b2'
+				}
+			}
+		}
+	};
+
+	assert.same(deep, expected);
+});
+
+test('should use custom base', async assert => {
+	const deep = await requireGlob('./fixtures/deep/**/*.js', {
+		base: path.join(__dirname, 'fixtures')
+	});
+
+	const expected = {
+		deep: {
+			a: {
+				a1: 'a1',
+				a2: 'a2'
+			},
+			b: {
+				b_bB: { // eslint-disable-line camelcase
+					_bB1: '_b.b1',
+					bB2: 'b.b2'
+				},
+				b1: 'b1',
+				b2: 'b2'
+			}
+		}
+	};
+
+	assert.same(deep, expected);
+});
+
 test('should bust cache', async assert => {
 	const a = await requireGlob('./fixtures/rand*.js');
 	const b = await requireGlob('./fixtures/rand*.js');
@@ -69,40 +127,35 @@ test('should bust cache', async assert => {
 	assert.is(d.random, e.random);
 });
 
-test('should use custom cwd', async assert => {
-	const deep = await requireGlob('./test/**/deep/**/*.js', {cwd: path.dirname(__dirname)});
-	const expected = {
-		a: {
-			a1: 'a1',
-			a2: 'a2'
-		},
-		b: {
-			b_bB: { // eslint-disable-line camelcase
-				_bB1: '_b.b1',
-				bB2: 'b.b2'
-			},
-			b1: 'b1',
-			b2: 'b2'
-		}
-	};
-
-	assert.same(deep, expected);
-});
-
 test('should use custom mapper', async assert => {
-	function mapper(filePath, i) {
-		return {
-			shortPath: path.basename(filePath).toUpperCase(),
-			exports: i
-		};
-	}
+	const deep = requireGlob.sync('./fixtures/deep/**/*.js', {
+		mapper: function mapper(options, filePath, i) {
+			switch (i) {
+				// The reducer expects path and export values
+				case 0:
+					return null;
 
-	const deep = requireGlob.sync('./fixtures/deep/**/*.js', {mapper});
+				case 1:
+					return {path: filePath};
+
+				case 2:
+					return {exports: i};
+
+				// The reducer expects a path that results in a property name
+				case 3:
+					return {path: '/', exports: i};
+
+				// Like this
+				default:
+					return {
+						path: path.basename(filePath).toUpperCase(),
+						exports: i
+					};
+			}
+		}
+	});
+
 	const expected = {
-		A1: 0,
-		A2: 1,
-		_BB1: 2,
-		BB2: 3,
 		B1: 4,
 		B2: 5
 	};
@@ -111,17 +164,19 @@ test('should use custom mapper', async assert => {
 });
 
 test('should use custom reducer', async assert => {
-	function reducer(tree, file) {
-		if (!Array.isArray(tree)) {
-			tree = [];
+	const deep = await requireGlob('./fixtures/deep/**/*.js', {
+		reducer: function reducer(options, tree, file) {
+			// The tree is an object by default
+			if (!Array.isArray(tree)) {
+				tree = [];
+			}
+
+			tree.push(file.exports);
+
+			return tree;
 		}
+	});
 
-		tree.push(file.exports);
-
-		return tree;
-	}
-
-	const deep = await requireGlob('./fixtures/deep/**/*.js', {reducer});
 	const expected = [
 		'a1',
 		'a2',
@@ -130,24 +185,6 @@ test('should use custom reducer', async assert => {
 		'b1',
 		'b2'
 	];
-
-	assert.same(deep, expected);
-});
-
-test('should use custom keygen', async assert => {
-	function keygen(file) {
-		return file.shortPath;
-	}
-
-	const deep = await requireGlob('./fixtures/deep/**/*.js', {keygen});
-	const expected = {
-		'a/a1.js': 'a1',
-		'a/a2.js': 'a2',
-		'b/b_b-b/_b.b1.js': '_b.b1',
-		'b/b_b-b/b.b2.js': 'b.b2',
-		'b/b1.js': 'b1',
-		'b/b2.js': 'b2'
-	};
 
 	assert.same(deep, expected);
 });
