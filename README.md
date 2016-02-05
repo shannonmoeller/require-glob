@@ -69,9 +69,17 @@ The current working directory in which to search. Defaults to the `__dirname` of
 
 Type: `{String}` (default: common non-glob parent)
 
-The common parent of matched files. Default is everything before a glob starts (see [glob-parent][parent]).
+Default is everything before the first glob starts in the first pattern (see [glob-parent][parent]).
 
 [parent]: https://github.com/es128/glob-parent
+
+```js
+requireGlob(['./src/**', './lib/**'], { cwd: '/home/jdoe/my-module' });
+// base is: /home/jdoe/my-module/src
+
+requireGlob('./{src,lib}/**', { cwd: '/home/jdoe/my-module' });
+// base is: /home/jdoe/my-module
+```
 
 ### bustCache
 
@@ -86,10 +94,10 @@ Type: `{Function(options, filePath, i, filePaths) : fileObject}`
 The mapper is reponsible for requiring the globbed modules. The default mapper returns an object containing path information and the result of requiring the module.
 
 ```js
-// given the glob
-'./src/**/*.js'
+// file: /home/jdoe/my-module/index.js
+requireGlob('./src/**/*.js');
 
-// the resulting list
+// the resulting list of files
 [
     './src/unicorn.js',
     './src/rainbow/red-orange.js',
@@ -97,7 +105,7 @@ The mapper is reponsible for requiring the globbed modules. The default mapper r
     './src/rainbow/BluePurple.js',
 ]
 
-// will map to
+// will be mapped to
 [
     {
         cwd: '/home/jdoe/my-module',

@@ -81,11 +81,11 @@ function mapReduce(options, filePaths) {
 // API
 
 function normalizeOptions(pattern, options) {
-	pattern = pattern || '';
+	pattern = [].concat(pattern || '');
 	options = options || {};
 
 	options.cwd = options.cwd || path.dirname(module.parent.filename);
-	options.base = options.base || globParent(path.resolve(options.cwd, pattern));
+	options.base = options.base || globParent(path.resolve(options.cwd, pattern[0]));
 	options.bustCache = options.bustCache || false;
 
 	options.mapper = (options.mapper || mapper).bind(null, options);

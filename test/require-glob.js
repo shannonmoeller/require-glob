@@ -62,6 +62,35 @@ test('should require nested modules', async assert => {
 	assert.same(deepB, expected);
 });
 
+test('should require multiple patterns', async assert => {
+	const deep = await requireGlob([
+		'./fixtures/{deep,shallow}/**/*.js',
+		'!./**/a*'
+	]);
+
+	const expected = {
+		deep: {
+			b: {
+				b_bB: { // eslint-disable-line camelcase
+					_bB1: '_b.b1',
+					bB2: 'b.b2'
+				},
+				b1: 'b1',
+				b2: 'b2'
+			}
+		},
+		shallow: {
+			b: 'b',
+			c: 'c',
+			d: {
+				e: 'e'
+			}
+		}
+	};
+
+	assert.same(deep, expected);
+});
+
 test('should use custom cwd', async assert => {
 	const deep = await requireGlob('./test/**/deep/**/*.js', {
 		cwd: path.dirname(__dirname)
