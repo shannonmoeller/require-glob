@@ -189,7 +189,7 @@ _This option has no effect if you define your own `reducer` function._
 {
     fooBar: {
         barBaz: {
-            _batQux: require('./fooBar/bar-baz/_bat.qux.js')
+            _batQux: require('./src/fooBar/bar-baz/_bat.qux.js')
         }
     }
 }
