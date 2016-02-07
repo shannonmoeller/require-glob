@@ -1,6 +1,6 @@
 {
   "name": "require-glob",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "Require multiple modules using glob patterns. Supports exclusions.",
   "main": "src/require-glob.js",
   "scripts": {
