@@ -25,11 +25,11 @@ var requireGlob = require('require-glob');
 requireGlob(['**/*.js', '!cake.js']).then(function (modules) {
     console.log(modules);
     // {
-    //     unicorn: [Object object],
+    //     unicorn: [object Object],
     //     rainbow: {
-    //         redOrange: [Object object],
-    //         _yellow_green: [Object object],
-    //         BluePurple: [Object object]
+    //         redOrange: [object Object],
+    //         _yellow_green: [object Object],
+    //         BluePurple: [object Object]
     //     }
     // }
 });
@@ -71,6 +71,8 @@ Type: `{String}` (default: common non-glob parent)
 
 Default is everything before the first glob starts in the first pattern (see [`glob-parent`][parent]).
 
+_This option has no effect if you define your own `mapper` function._
+
 [parent]: https://github.com/es128/glob-parent#usage
 
 ```js
@@ -87,11 +89,15 @@ Type: `{Boolean}` (default: `false`)
 
 Whether to force the reload of modules by deleting them from the cache. Useful inside watch tasks.
 
+_This option has no effect if you define your own `mapper` function._
+
 ### mapper
 
-Type: `{Function(options, filePath, i, filePaths) : fileObject}`
+Type: `{Function(options, filePath, i, filePaths) : Object}`
 
-The mapper is reponsible for requiring the globbed modules. The default mapper returns an object containing path information and the result of requiring the module.
+The [mapper][map] is reponsible for requiring the globbed modules. The default mapper returns an object containing path information and the result of requiring the module.
+
+[map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
 
 ```js
 // file: /home/jdoe/my-module/index.js
@@ -136,9 +142,11 @@ requireGlob('./src/**/*.js');
 
 ### reducer
 
-Type: `{Function(resultObject, fileObject, i, fileObjects) : resultObject}`
+Type: `{Function(options, result, fileObject, i, fileObjects): Object}`
 
-The reducer is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. Path separators determine object nesting. Directory names and file names are converted to `camelCase`. File extensions are ignored.
+The [reducer][reduce] is responsible for generating the final object structure. The default reducer expects an array as produced by the default mapper and turns it into a nested object. Path separators determine object nesting. Directory names and file names are converted to `camelCase`. File extensions are ignored.
+
+[reduce]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
 
 ```js
 // mapper example is reduced to
@@ -149,6 +157,40 @@ The reducer is responsible for generating the final object structure. The defaul
         redOrange: require('./src/rainbow/red-orange.js'),
         _yellow_green: require('./src/rainbow/_yellow_green.js'),
         BluePurple: require('./src/rainbow/BluePurple.js'),
+    }
+}
+```
+
+### keygen
+
+Type: `{Function(options, fileObj): String|Array.<String>}`
+
+The default reducer uses this function to generate a unique key path for every module. The default keygen converts hyphenated and dot-separated sections of directory names and the file name to `camelCase`. File extensions are ignored. Path separators determine object nesting.
+
+_This option has no effect if you define your own `reducer` function._
+
+```js
+// given the mapped object
+{
+    cwd: '/home/jdoe/my-module',
+    base: '/home/jdoe/my-module/src',
+    path: '/home/jdoe/my-module/src/fooBar/bar-baz/_bat.qux.js',
+    exports: require('./src/fooBar/bar-baz/_bat.qux.js')
+}
+
+// the keygen will produce
+[
+    'fooBar',
+    'barBaz',
+    '_batQux'
+]
+
+// which the reducer will use to construct
+{
+    fooBar: {
+        barBaz: {
+            _batQux: require('./fooBar/bar-baz/_bat.qux.js')
+        }
     }
 }
 ```

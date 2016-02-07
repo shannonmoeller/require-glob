@@ -52,13 +52,7 @@ function reducer(options, tree, fileObj) {
 		return tree;
 	}
 
-	var uniquePath = fileObj.path.replace(fileObj.base, '');
-	var parsedPath = path.parse(uniquePath);
-	var keys = [parsedPath.dir, parsedPath.name]
-		.map(toSplitPath)
-		.reduce(toCombinedValues)
-		.map(toCamelCase)
-		.filter(Boolean);
+	var keys = [].concat(options.keygen(fileObj));
 
 	if (!keys.length) {
 		return tree;
@@ -70,6 +64,17 @@ function reducer(options, tree, fileObj) {
 	obj[lastKey] = fileObj.exports;
 
 	return tree;
+}
+
+function keygen(options, fileObj) {
+	var uniquePath = fileObj.path.replace(fileObj.base, '');
+	var parsedPath = path.parse(uniquePath);
+
+	return [parsedPath.dir, parsedPath.name]
+		.map(toSplitPath)
+		.reduce(toCombinedValues)
+		.map(toCamelCase)
+		.filter(Boolean);
 }
 
 function mapReduce(options, filePaths) {
@@ -90,6 +95,7 @@ function normalizeOptions(pattern, options) {
 
 	options.mapper = (options.mapper || mapper).bind(null, options);
 	options.reducer = (options.reducer || reducer).bind(null, options);
+	options.keygen = (options.keygen || keygen).bind(null, options);
 
 	return options;
 }

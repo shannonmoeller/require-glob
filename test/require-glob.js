@@ -158,7 +158,7 @@ test('should bust cache', async assert => {
 
 test('should use custom mapper', async assert => {
 	const deep = requireGlob.sync('./fixtures/deep/**/*.js', {
-		mapper: function mapper(options, filePath, i) {
+		mapper: function (options, filePath, i) {
 			switch (i) {
 				// The reducer expects path and export values
 				case 0:
@@ -194,7 +194,7 @@ test('should use custom mapper', async assert => {
 
 test('should use custom reducer', async assert => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
-		reducer: function reducer(options, tree, file) {
+		reducer: function (options, tree, file) {
 			// The tree is an object by default
 			if (!Array.isArray(tree)) {
 				tree = [];
@@ -214,6 +214,25 @@ test('should use custom reducer', async assert => {
 		'b1',
 		'b2'
 	];
+
+	assert.same(deep, expected);
+});
+
+test('should use custom keygen', async assert => {
+	const deep = await requireGlob('./fixtures/deep/**/*.js', {
+		keygen: function (options, file) {
+			return file.path.replace(file.base + '/', '');
+		}
+	});
+
+	const expected = {
+		'a/a1.js': 'a1',
+		'a/a2.js': 'a2',
+		'b/b_b-b/_b.b1.js': '_b.b1',
+		'b/b_b-b/b.b2.js': 'b.b2',
+		'b/b1.js': 'b1',
+		'b/b2.js': 'b2'
+	};
 
 	assert.same(deep, expected);
 });
