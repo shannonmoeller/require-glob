@@ -39,7 +39,11 @@ requireGlob(['**/*.js', '!cake.js']).then(function (modules) {
 
 ### requireGlob(patterns [, options]): Promise
 
+Returns a promise that resolves to an object containing the required contents of matching globbed files.
+
 ### requireGlob.sync(patterns [, options]): Object
+
+Returns an object containing the required contents of matching globbed files.
 
 #### patterns
 
@@ -53,19 +57,17 @@ One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
 
 Type: `{Object}` (optional)
 
-This object is ultimately passed directly to [`node-glob`][glob] so check there for more options.
+This object is ultimately passed directly to [`node-glob`][glob] so check there for more options, in addition to those below.
 
 [glob]: https://github.com/isaacs/node-glob#usage
 
-## Options
-
-### cwd
+##### cwd
 
 Type: `{String}` (default: `__dirname`)
 
 The current working directory in which to search. Defaults to the `__dirname` of the requiring module so relative paths work the same as Node.js's require.
 
-### base
+##### base
 
 Type: `{String}` (default: common non-glob parent)
 
@@ -83,7 +85,7 @@ requireGlob('./{src,lib}/**', { cwd: '/home/jdoe/my-module' });
 // base is: /home/jdoe/my-module
 ```
 
-### bustCache
+##### bustCache
 
 Type: `{Boolean}` (default: `false`)
 
@@ -91,7 +93,7 @@ Whether to force the reload of modules by deleting them from the cache. Useful i
 
 _This option has no effect if you define your own `mapper` function._
 
-### mapper
+##### mapper
 
 Type: `{Function(options, filePath, i, filePaths) : Object}`
 
@@ -140,7 +142,7 @@ requireGlob('./src/**/*.js');
 ]
 ```
 
-### reducer
+##### reducer
 
 Type: `{Function(options, result, fileObject, i, fileObjects): Object}`
 
@@ -161,7 +163,7 @@ The [reducer][reduce] is responsible for generating the final object structure. 
 }
 ```
 
-### keygen
+##### keygen
 
 Type: `{Function(options, fileObj): String|Array.<String>}`
 

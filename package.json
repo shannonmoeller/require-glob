@@ -37,12 +37,12 @@
   "homepage": "https://github.com/shannonmoeller/require-glob",
   "dependencies": {
     "glob-parent": "^2.0.0",
-    "globby": "^3.0.1"
+    "globby": "^4.0.0"
   },
   "devDependencies": {
     "ava": "^0.11.0",
-    "coveralls": "^2.11.4",
-    "nyc": "^5.5.0",
+    "coveralls": "^2.11.6",
+    "nyc": "^5.6.0",
     "watch": "^0.17.1",
     "xo": "^0.12.1"
   },

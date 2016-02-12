@@ -9,6 +9,10 @@ var SEPARATOR_PATTERN = /[\\\/]/;
 
 // Utilities
 
+function getParentDir() {
+	return path.dirname(module.parent.filename);
+}
+
 function toCamelCase(value) {
 	return value.replace(CAMELIZE_PATTERN, function (match, character) {
 		return character.toUpperCase();
@@ -89,7 +93,7 @@ function normalizeOptions(pattern, options) {
 	pattern = [].concat(pattern || '');
 	options = options || {};
 
-	options.cwd = options.cwd || path.dirname(module.parent.filename);
+	options.cwd = options.cwd || getParentDir();
 	options.base = options.base || globParent(path.resolve(options.cwd, pattern[0]));
 	options.bustCache = options.bustCache || false;
 

@@ -2,7 +2,7 @@ import path from 'path';
 import test from 'ava';
 import requireGlob from '../src/require-glob';
 
-test('should require no modules', async assert => {
+test('should require nothing', async assert => {
 	const emptyA = await requireGlob();
 	const emptyB = requireGlob.sync();
 
@@ -20,8 +20,8 @@ test('should require a module', async assert => {
 	const oneA = await requireGlob('./fixtures/rand*.js');
 	const oneB = requireGlob.sync('./fixtures/rand*.js');
 
-	assert.same(typeof oneA.random, 'number');
-	assert.same(typeof oneB.random, 'number');
+	assert.is(typeof oneA.random, 'number');
+	assert.is(typeof oneB.random, 'number');
 });
 
 test('should require multiple modules', async assert => {
