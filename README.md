@@ -63,9 +63,9 @@ This object is ultimately passed directly to [`node-glob`][glob] so check there 
 
 ##### cwd
 
-Type: `{String}` (default: `process.cwd()`)
+Type: `{String}` (default: `__dirname`)
 
-The current working directory in which to search. Defaults to the `process.cwd()` of the requiring module so relative paths work the same as Node.js's require.
+The current working directory in which to search. Defaults to the `__dirname` of the requiring module so relative paths work the same as Node.js's require.
 
 ##### base
 
