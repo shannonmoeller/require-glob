@@ -2,29 +2,23 @@ import path from 'path';
 import test from 'ava';
 import requireGlob from '../src/require-glob';
 
-test('should require nothing', async assert => {
-	const emptyA = await requireGlob();
-	const emptyB = requireGlob.sync();
-
-	assert.same(emptyA, {});
-	assert.same(emptyB, {});
-
+test('should require nothing', async t => {
 	const bogusA = await requireGlob('./fixtures/bogu*.js');
 	const bogusB = requireGlob.sync('./fixtures/bogu*.js');
 
-	assert.same(bogusA, {});
-	assert.same(bogusB, {});
+	t.deepEqual(bogusA, {});
+	t.deepEqual(bogusB, {});
 });
 
-test('should require a module', async assert => {
+test('should require a module', async t => {
 	const oneA = await requireGlob('./fixtures/rand*.js');
 	const oneB = requireGlob.sync('./fixtures/rand*.js');
 
-	assert.is(typeof oneA.random, 'number');
-	assert.is(typeof oneB.random, 'number');
+	t.is(typeof oneA.random, 'number');
+	t.is(typeof oneB.random, 'number');
 });
 
-test('should require multiple modules', async assert => {
+test('should require multiple modules', async t => {
 	const shallowA = await requireGlob('./fixtures/shallow/**/*.js');
 	const shallowB = requireGlob.sync('./fixtures/shallow/**/*.js');
 	const expected = {
@@ -36,11 +30,11 @@ test('should require multiple modules', async assert => {
 		}
 	};
 
-	assert.same(shallowA, expected);
-	assert.same(shallowB, expected);
+	t.deepEqual(shallowA, expected);
+	t.deepEqual(shallowB, expected);
 });
 
-test('should require nested modules', async assert => {
+test('should require nested modules', async t => {
 	const deepA = await requireGlob('./fixtures/deep/**/*.js');
 	const deepB = requireGlob.sync('./fixtures/deep/**/*.js');
 	const expected = {
@@ -58,11 +52,11 @@ test('should require nested modules', async assert => {
 		}
 	};
 
-	assert.same(deepA, expected);
-	assert.same(deepB, expected);
+	t.deepEqual(deepA, expected);
+	t.deepEqual(deepB, expected);
 });
 
-test('should require multiple patterns', async assert => {
+test('should require multiple patterns', async t => {
 	const deep = await requireGlob([
 		'./fixtures/{deep,shallow}/**/*.js',
 		'!./**/a*'
@@ -88,10 +82,10 @@ test('should require multiple patterns', async assert => {
 		}
 	};
 
-	assert.same(deep, expected);
+	t.deepEqual(deep, expected);
 });
 
-test('should use custom cwd', async assert => {
+test('should use custom cwd', async t => {
 	const deep = await requireGlob('./test/**/deep/**/*.js', {
 		cwd: path.dirname(__dirname)
 	});
@@ -115,10 +109,10 @@ test('should use custom cwd', async assert => {
 		}
 	};
 
-	assert.same(deep, expected);
+	t.deepEqual(deep, expected);
 });
 
-test('should use custom base', async assert => {
+test('should use custom base', async t => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
 		base: path.join(__dirname, 'fixtures')
 	});
@@ -140,23 +134,23 @@ test('should use custom base', async assert => {
 		}
 	};
 
-	assert.same(deep, expected);
+	t.deepEqual(deep, expected);
 });
 
-test('should bust cache', async assert => {
+test('should bust cache', async t => {
 	const a = await requireGlob('./fixtures/rand*.js');
 	const b = await requireGlob('./fixtures/rand*.js');
 	const c = await requireGlob('./fixtures/rand*.js', {bustCache: true});
 	const d = await requireGlob('./fixtures/rand*.js', {bustCache: true});
 	const e = await requireGlob('./fixtures/rand*.js');
 
-	assert.is(a.random, b.random);
-	assert.not(b.random, c.random);
-	assert.not(c.random, d.random);
-	assert.is(d.random, e.random);
+	t.is(a.random, b.random);
+	t.not(b.random, c.random);
+	t.not(c.random, d.random);
+	t.is(d.random, e.random);
 });
 
-test('should use custom mapper', async assert => {
+test('should use custom mapper', async t => {
 	const deep = requireGlob.sync('./fixtures/deep/**/*.js', {
 		mapper: function (options, filePath, i) {
 			switch (i) {
@@ -189,10 +183,10 @@ test('should use custom mapper', async assert => {
 		B2: 5
 	};
 
-	assert.same(deep, expected);
+	t.deepEqual(deep, expected);
 });
 
-test('should use custom reducer', async assert => {
+test('should use custom reducer', async t => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
 		reducer: function (options, tree, file) {
 			// The tree is an object by default
@@ -215,10 +209,10 @@ test('should use custom reducer', async assert => {
 		'b2'
 	];
 
-	assert.same(deep, expected);
+	t.deepEqual(deep, expected);
 });
 
-test('should use custom keygen', async assert => {
+test('should use custom keygen', async t => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
 		keygen: function (options, file) {
 			return file.path.replace(file.base + '/', '');
@@ -234,5 +228,5 @@ test('should use custom keygen', async assert => {
 		'b/b2.js': 'b2'
 	};
 
-	assert.same(deep, expected);
+	t.deepEqual(deep, expected);
 });

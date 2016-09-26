@@ -1,17 +1,14 @@
 'use strict';
 
+var path = require('path');
 var globParent = require('glob-parent');
 var globby = require('globby');
-var path = require('path');
+var parentModule = require('parent-module');
 
 var CAMELIZE_PATTERN = /[\.\-]+(.)/g;
 var SEPARATOR_PATTERN = /[\\\/]/;
 
 // Utilities
-
-function getParentDir() {
-	return path.dirname(module.parent.filename);
-}
 
 function toCamelCase(value) {
 	return value.replace(CAMELIZE_PATTERN, function (match, character) {
@@ -24,7 +21,11 @@ function toCombinedValues(a, b) {
 }
 
 function toNestedObject(obj, key) {
-	return obj[key] || (obj[key] = {});
+	if (!obj[key]) {
+		obj[key] = {};
+	}
+
+	return obj[key];
 }
 
 function toSplitPath(filePath) {
@@ -52,7 +53,7 @@ function mapper(options, filePath) {
 }
 
 function reducer(options, tree, fileObj) {
-	if (!fileObj || !fileObj.path || !fileObj.hasOwnProperty('exports')) {
+	if (!fileObj || !fileObj.path || !('exports' in fileObj)) {
 		return tree;
 	}
 
@@ -91,10 +92,8 @@ function mapReduce(options, filePaths) {
 
 function normalizeOptions(pattern, options) {
 	pattern = [].concat(pattern || '');
-	options = options || {};
 
-	options.cwd = options.cwd || getParentDir();
-	options.base = options.base || globParent(path.resolve(options.cwd, pattern[0]));
+	options.base = options.base || path.resolve(options.cwd, globParent(pattern[0]));
 	options.bustCache = options.bustCache || false;
 
 	options.mapper = (options.mapper || mapper).bind(null, options);
@@ -105,6 +104,12 @@ function normalizeOptions(pattern, options) {
 }
 
 function requireGlob(pattern, options) {
+	options = options || {};
+
+	// we have to do this outside of `normalizeOptions()`
+	// for `parentModule()` to work properly
+	options.cwd = options.cwd || path.dirname(parentModule());
+
 	options = normalizeOptions(pattern, options);
 
 	return globby(pattern, options)
@@ -112,6 +117,12 @@ function requireGlob(pattern, options) {
 }
 
 function requireGlobSync(pattern, options) {
+	options = options || {};
+
+	// we have to do this outside of `normalizeOptions()`
+	// for `parentModule()` to work properly
+	options.cwd = options.cwd || path.dirname(parentModule());
+
 	options = normalizeOptions(pattern, options);
 
 	return mapReduce(options, globby.sync(pattern, options));
