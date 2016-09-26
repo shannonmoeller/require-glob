@@ -36,14 +36,14 @@
   },
   "homepage": "https://github.com/shannonmoeller/require-glob",
   "dependencies": {
-    "glob-parent": "^2.0.0",
+    "glob-parent": "^3.0.0",
     "globby": "^6.0.0",
     "parent-module": "^0.1.0"
   },
   "devDependencies": {
     "ava": "^0.16.0",
-    "coveralls": "^2.11.12",
-    "nyc": "^8.1.0",
+    "coveralls": "^2.11.14",
+    "nyc": "^8.3.0",
     "watch": "^0.19.2",
     "xo": "^0.16.0"
   },
