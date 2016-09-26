@@ -93,7 +93,7 @@ function mapReduce(options, filePaths) {
 function normalizeOptions(pattern, options) {
 	pattern = [].concat(pattern || '');
 
-	options.base = options.base || globParent(path.resolve(options.cwd, pattern[0]));
+	options.base = options.base || path.resolve(options.cwd, globParent(pattern[0]));
 	options.bustCache = options.bustCache || false;
 
 	options.mapper = (options.mapper || mapper).bind(null, options);
