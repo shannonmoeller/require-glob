@@ -1,6 +1,6 @@
 # `require-glob`
 
-[![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Chat][gitter-img]][gitter-url] [![Tip][amazon-img]][amazon-url]
+[![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Tip][amazon-img]][amazon-url]
 
 Requires multiple modules using glob patterns and combines them into a nested object.
 
@@ -216,9 +216,7 @@ Licensed under [MIT](http://shannonmoeller.com/mit.txt)
 [coveralls-img]: http://img.shields.io/coveralls/shannonmoeller/require-glob/master.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/shannonmoeller/require-glob
 [downloads-img]: http://img.shields.io/npm/dm/require-glob.svg?style=flat-square
-[gitter-img]:    http://img.shields.io/badge/gitter-join_chat-1dce73.svg?style=flat-square
-[gitter-url]:    https://gitter.im/shannonmoeller/shannonmoeller
 [npm-img]:       http://img.shields.io/npm/v/require-glob.svg?style=flat-square
 [npm-url]:       https://npmjs.org/package/require-glob
-[travis-img]:    http://img.shields.io/travis/shannonmoeller/require-glob.svg?style=flat-square
+[travis-img]:    http://img.shields.io/travis/shannonmoeller/require-glob/master.svg?style=flat-square
 [travis-url]:    https://travis-ci.org/shannonmoeller/require-glob
