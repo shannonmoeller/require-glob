@@ -41,7 +41,7 @@
     "parent-module": "^0.1.0"
   },
   "devDependencies": {
-    "ava": "^0.16.0",
+    "ava": "^0.18.1",
     "coveralls": "^2.11.14",
     "nyc": "^8.3.0",
     "watch": "^0.19.2",
