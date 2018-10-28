@@ -2,17 +2,19 @@
   "name": "require-glob",
   "version": "3.2.0",
   "description": "Require multiple modules using glob patterns. Supports exclusions.",
-  "main": "src/require-glob.js",
   "scripts": {
-    "coveralls": "nyc report -r text-lcov | coveralls",
-    "pretest": "xo src/*.js test/*.js",
-    "test": "nyc ava -v test/*.js",
-    "watch": "watch 'npm test' src test -du"
+    "build": "rm -rf dist && mkdir dist && rollup -c",
+    "lint": "run-s lint-*",
+    "lint-prettier": "prettier --ignore-path .gitignore --write \"**/*.js\"",
+    "lint-eslint": "eslint --ignore-path .gitignore --fix \"**/*.js\"",
+    "test": "nyc run-s test-*",
+    "test-node": "NODE_ENV=test rollup test/node.js -c | node | tap-diff",
+    "report": "nyc report -r text-lcov | coveralls",
+    "pretest": "run-s lint",
+    "precommit": "run-s test && git add .",
+    "prepublishOnly": "run-s test"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/shannonmoeller/require-glob"
-  },
+  "repository": "shannonmoeller/require-glob",
   "keywords": [
     "dir",
     "directory",
@@ -29,25 +31,55 @@
     "require",
     "tree"
   ],
-  "author": "Shannon Moeller <me@shannonmoeller.com> (http://shannonmoeller.com)",
+  "author": "Shannon Moeller <me@shannonmoeller> (http://shannonmoeller.com)",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/shannonmoeller/require-glob/issues"
-  },
-  "homepage": "https://github.com/shannonmoeller/require-glob",
+  "main": "dist/require-glob.cjs.js",
+  "module": "dist/require-glob.es.js",
+  "files": [
+    "dist",
+    "*.md"
+  ],
   "dependencies": {
-    "glob-parent": "^3.0.0",
-    "globby": "^6.0.0",
+    "glob-parent": "^3.1.0",
+    "globby": "^8.0.1",
     "parent-module": "^0.1.0"
   },
   "devDependencies": {
-    "ava": "^0.16.0",
-    "coveralls": "^2.11.14",
-    "nyc": "^8.3.0",
-    "watch": "^0.19.2",
-    "xo": "^0.16.0"
+    "blue-tape": "^1.0.0",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.18.2",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-whim": "^3.1.0",
+    "husky": "^0.14.3",
+    "npm-run-all": "^4.1.2",
+    "nyc": "^11.4.1",
+    "prettier": "^1.11.1",
+    "rollup": "^0.56.4",
+    "rollup-config-whim": "^2.0.0",
+    "tap-diff": "^0.1.1"
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint-config-whim",
+      "eslint-config-prettier"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ]
   },
   "engines": {
-    "node": ">= 0.12"
+    "node": ">= 6",
+    "npm": ">= 3"
   }
 }

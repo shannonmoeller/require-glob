@@ -1,19 +1,17 @@
-'use strict';
+import path from 'path';
+import globParent from 'glob-parent';
+import globby from 'globby';
+import parentModule from 'parent-module';
 
-var path = require('path');
-var globParent = require('glob-parent');
-var globby = require('globby');
-var parentModule = require('parent-module');
-
-var CAMELIZE_PATTERN = /[\.\-]+(.)/g;
-var SEPARATOR_PATTERN = /[\\\/]/;
+const CAMELIZE_PATTERN = /[.-]+(.)/g;
+const SEPARATOR_PATTERN = /[\\/]/;
 
 // Utilities
 
 function toCamelCase(value) {
-	return value.replace(CAMELIZE_PATTERN, function (match, character) {
-		return character.toUpperCase();
-	});
+	return value.replace(CAMELIZE_PATTERN, (match, character) =>
+		character.toUpperCase()
+	);
 }
 
 function toCombinedValues(a, b) {
@@ -35,8 +33,8 @@ function toSplitPath(filePath) {
 // Map Reduce
 
 function mapper(options, filePath) {
-	var cwd = options.cwd;
-	var base = options.base;
+	const cwd = options.cwd;
+	const base = options.base;
 
 	filePath = require.resolve(path.resolve(cwd, filePath));
 
@@ -45,10 +43,10 @@ function mapper(options, filePath) {
 	}
 
 	return {
-		cwd: cwd,
-		base: base,
+		cwd,
+		base,
 		path: filePath,
-		exports: require(filePath)
+		exports: require(filePath),
 	};
 }
 
@@ -57,14 +55,14 @@ function reducer(options, tree, fileObj) {
 		return tree;
 	}
 
-	var keys = [].concat(options.keygen(fileObj));
+	const keys = [].concat(options.keygen(fileObj));
 
 	if (!keys.length) {
 		return tree;
 	}
 
-	var lastKey = keys.pop();
-	var obj = keys.reduce(toNestedObject, tree);
+	const lastKey = keys.pop();
+	const obj = keys.reduce(toNestedObject, tree);
 
 	obj[lastKey] = fileObj.exports;
 
@@ -72,8 +70,8 @@ function reducer(options, tree, fileObj) {
 }
 
 function keygen(options, fileObj) {
-	var uniquePath = fileObj.path.replace(fileObj.base, '');
-	var parsedPath = path.parse(uniquePath);
+	const uniquePath = fileObj.path.replace(fileObj.base, '');
+	const parsedPath = path.parse(uniquePath);
 
 	return [parsedPath.dir, parsedPath.name]
 		.map(toSplitPath)
@@ -83,9 +81,7 @@ function keygen(options, fileObj) {
 }
 
 function mapReduce(options, filePaths) {
-	return filePaths
-		.map(options.mapper)
-		.reduce(options.reducer, {});
+	return filePaths.map(options.mapper).reduce(options.reducer, {});
 }
 
 // API
@@ -93,7 +89,8 @@ function mapReduce(options, filePaths) {
 function normalizeOptions(pattern, options) {
 	pattern = [].concat(pattern || '');
 
-	options.base = options.base || path.resolve(options.cwd, globParent(pattern[0]));
+	options.base =
+		options.base || path.resolve(options.cwd, globParent(pattern[0]));
 	options.bustCache = options.bustCache || false;
 
 	options.mapper = (options.mapper || mapper).bind(null, options);
@@ -112,8 +109,7 @@ function requireGlob(pattern, options) {
 
 	options = normalizeOptions(pattern, options);
 
-	return globby(pattern, options)
-		.then(mapReduce.bind(null, options));
+	return globby(pattern, options).then(mapReduce.bind(null, options));
 }
 
 function requireGlobSync(pattern, options) {
@@ -128,5 +124,6 @@ function requireGlobSync(pattern, options) {
 	return mapReduce(options, globby.sync(pattern, options));
 }
 
-module.exports = requireGlob;
-module.exports.sync = requireGlobSync;
+requireGlob.sync = requireGlobSync;
+
+export default requireGlob;
