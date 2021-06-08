@@ -202,7 +202,9 @@ test('should use custom reducer', async t => {
 test('should use custom keygen', async t => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
 		keygen: function (options, file) {
-			return file.path.replace(file.base + '/', '');
+			return file.path
+				.replace(file.base + path.sep, '')
+				.replace(/\\/g, '/');
 		}
 	});
 
