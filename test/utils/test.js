@@ -1,15 +1,22 @@
 'use strict';
 
-var assert = require('assert');
+const assert = require('assert');
+const tests = [];
 
-async function test(msg, fn) {
-	try {
-		await fn(assert);
-		console.log(`pass - ${msg}`);
-	} catch (error) {
-		console.error(`fail - ${msg}`, error);
-		process.exit(1);
-	}
+function test(msg, fn) {
+	tests.push([msg, fn]);
 }
+
+process.nextTick(async function run() {
+	for (const [msg, fn] of tests) {
+		try {
+			await fn(assert);
+			console.log(`pass - ${msg}`);
+		} catch (error) {
+			console.error(`fail - ${msg}`, error);
+			process.exit(1);
+		}
+	}
+});
 
 module.exports = test;

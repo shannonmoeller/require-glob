@@ -1,8 +1,8 @@
 'use strict';
 
-var path = require('path');
-var test = require('./utils/test.js');
-var requireGlob = require('../src/require-glob');
+const path = require('path');
+const test = require('./utils/test.js');
+const requireGlob = require('../src/require-glob');
 
 test('should require nothing', async t => {
 	const bogusA = await requireGlob('./fixtures/bogu*.js');
