@@ -1,6 +1,8 @@
-import path from 'path';
-import test from 'ava';
-import requireGlob from '../src/require-glob';
+'use strict';
+
+var path = require('path');
+var test = require('./utils/test.js');
+var requireGlob = require('../src/require-glob');
 
 test('should require nothing', async t => {
 	const bogusA = await requireGlob('./fixtures/bogu*.js');
@@ -14,8 +16,8 @@ test('should require a module', async t => {
 	const oneA = await requireGlob('./fixtures/rand*.js');
 	const oneB = requireGlob.sync('./fixtures/rand*.js');
 
-	t.is(typeof oneA.random, 'number');
-	t.is(typeof oneB.random, 'number');
+	t.equal(typeof oneA.random, 'number');
+	t.equal(typeof oneB.random, 'number');
 });
 
 test('should require multiple modules', async t => {
@@ -144,43 +146,31 @@ test('should bust cache', async t => {
 	const d = await requireGlob('./fixtures/rand*.js', {bustCache: true});
 	const e = await requireGlob('./fixtures/rand*.js');
 
-	t.is(a.random, b.random);
-	t.not(b.random, c.random);
-	t.not(c.random, d.random);
-	t.is(d.random, e.random);
+	t.equal(a.random, b.random);
+	t.notEqual(b.random, c.random);
+	t.notEqual(c.random, d.random);
+	t.equal(d.random, e.random);
 });
 
 test('should use custom mapper', async t => {
 	const deep = requireGlob.sync('./fixtures/deep/**/*.js', {
 		mapper: function (options, filePath, i) {
-			switch (i) {
-				// The reducer expects path and export values
-				case 0:
-					return null;
+			const base = path.basename(filePath);
 
-				case 1:
-					return {path: filePath};
-
-				case 2:
-					return {exports: i};
-
-				// The reducer expects a path that results in a property name
-				case 3:
-					return {path: '/', exports: i};
-
-				// Like this
-				default:
-					return {
-						path: path.basename(filePath).toUpperCase(),
-						exports: i
-					};
-			}
+			return {
+				path: base.toUpperCase(),
+				exports: base,
+			};
 		}
 	});
 
 	const expected = {
-		B1: 4,
-		B2: 5
+		A1: 'a1.js',
+		A2: 'a2.js',
+		B1: 'b1.js',
+		B2: 'b2.js',
+		BB2: 'b.b2.js',
+		_BB1: '_b.b1.js'
 	};
 
 	t.deepEqual(deep, expected);
@@ -189,25 +179,22 @@ test('should use custom mapper', async t => {
 test('should use custom reducer', async t => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
 		reducer: function (options, tree, file) {
-			// The tree is an object by default
-			if (!Array.isArray(tree)) {
-				tree = [];
-			}
+			const base = path.basename(file.path);
 
-			tree.push(file.exports);
+			tree[base.toUpperCase()] = file.exports;
 
 			return tree;
 		}
 	});
 
-	const expected = [
-		'a1',
-		'a2',
-		'_b.b1',
-		'b.b2',
-		'b1',
-		'b2'
-	];
+	const expected = {
+		'A1.JS': 'a1',
+		'A2.JS': 'a2',
+		'B1.JS': 'b1',
+		'B2.JS': 'b2',
+		'B.B2.JS': 'b.b2',
+		'_B.B1.JS': '_b.b1'
+	};
 
 	t.deepEqual(deep, expected);
 });
@@ -215,7 +202,9 @@ test('should use custom reducer', async t => {
 test('should use custom keygen', async t => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
 		keygen: function (options, file) {
-			return file.path.replace(file.base + '/', '');
+			return file.path
+				.replace(file.base + path.sep, '')
+				.replace(/\\/g, '/');
 		}
 	});
 

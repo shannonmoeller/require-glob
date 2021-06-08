@@ -1,6 +1,6 @@
 # `require-glob`
 
-[![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Tip][amazon-img]][amazon-url]
+[![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url]
 
 Requires multiple modules using glob patterns and combines them into a nested object.
 
@@ -209,12 +209,6 @@ Standards for this project, including tests, code coverage, and semantics are en
 
 MIT © [Shannon Moeller](http://shannonmoeller.com)
 
-[amazon-img]:    https://img.shields.io/badge/amazon-tip_jar-yellow.svg?style=flat-square
-[amazon-url]:    https://www.amazon.com/gp/registry/wishlist/1VQM9ID04YPC5?sort=universal-price
-[coveralls-img]: http://img.shields.io/coveralls/shannonmoeller/require-glob/master.svg?style=flat-square
-[coveralls-url]: https://coveralls.io/r/shannonmoeller/require-glob
 [downloads-img]: http://img.shields.io/npm/dm/require-glob.svg?style=flat-square
 [npm-img]:       http://img.shields.io/npm/v/require-glob.svg?style=flat-square
 [npm-url]:       https://npmjs.org/package/require-glob
-[travis-img]:    http://img.shields.io/travis/shannonmoeller/require-glob/master.svg?style=flat-square
-[travis-url]:    https://travis-ci.org/shannonmoeller/require-glob
