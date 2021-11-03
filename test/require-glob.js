@@ -4,7 +4,7 @@ const path = require('path');
 const test = require('./utils/test.js');
 const requireGlob = require('../src/require-glob');
 
-test('should require nothing', async t => {
+test('should require nothing', async (t) => {
 	const bogusA = await requireGlob('./fixtures/bogu*.js');
 	const bogusB = requireGlob.sync('./fixtures/bogu*.js');
 
@@ -12,7 +12,7 @@ test('should require nothing', async t => {
 	t.deepEqual(bogusB, {});
 });
 
-test('should require a module', async t => {
+test('should require a module', async (t) => {
 	const oneA = await requireGlob('./fixtures/rand*.js');
 	const oneB = requireGlob.sync('./fixtures/rand*.js');
 
@@ -20,7 +20,7 @@ test('should require a module', async t => {
 	t.equal(typeof oneB.random, 'number');
 });
 
-test('should require multiple modules', async t => {
+test('should require multiple modules', async (t) => {
 	const shallowA = await requireGlob('./fixtures/shallow/**/*.js');
 	const shallowB = requireGlob.sync('./fixtures/shallow/**/*.js');
 	const expected = {
@@ -28,68 +28,70 @@ test('should require multiple modules', async t => {
 		b: 'b',
 		c: 'c',
 		d: {
-			e: 'e'
-		}
+			e: 'e',
+		},
 	};
 
 	t.deepEqual(shallowA, expected);
 	t.deepEqual(shallowB, expected);
 });
 
-test('should require nested modules', async t => {
+test('should require nested modules', async (t) => {
 	const deepA = await requireGlob('./fixtures/deep/**/*.js');
 	const deepB = requireGlob.sync('./fixtures/deep/**/*.js');
 	const expected = {
 		a: {
 			a1: 'a1',
-			a2: 'a2'
+			a2: 'a2',
 		},
 		b: {
-			b_bB: { // eslint-disable-line camelcase
+			b_bB: {
+				// eslint-disable-line camelcase
 				_bB1: '_b.b1',
-				bB2: 'b.b2'
+				bB2: 'b.b2',
 			},
 			b1: 'b1',
-			b2: 'b2'
-		}
+			b2: 'b2',
+		},
 	};
 
 	t.deepEqual(deepA, expected);
 	t.deepEqual(deepB, expected);
 });
 
-test('should require multiple patterns', async t => {
+test('should require multiple patterns', async (t) => {
 	const deep = await requireGlob([
 		'./fixtures/{deep,shallow}/**/*.js',
-		'!./**/a*'
+		'!./**/a*',
 	]);
 
 	const expected = {
 		deep: {
 			b: {
-				b_bB: { // eslint-disable-line camelcase
+				b_bB: {
+					// eslint-disable-line camelcase
 					_bB1: '_b.b1',
-					bB2: 'b.b2'
+					bB2: 'b.b2',
 				},
 				b1: 'b1',
-				b2: 'b2'
-			}
+				b2: 'b2',
+			},
 		},
 		shallow: {
 			b: 'b',
 			c: 'c',
 			d: {
-				e: 'e'
-			}
-		}
+				e: 'e',
+			},
+		},
 	};
 
 	t.deepEqual(deep, expected);
 });
 
-test('should use custom cwd', async t => {
+test('should use custom cwd', async (t) => {
 	const deep = await requireGlob('./test/**/deep/**/*.js', {
-		cwd: path.dirname(__dirname)
+		cwd: path.dirname(__dirname),
 	});
 
 	const expected = {
@@ -97,53 +99,55 @@ test('should use custom cwd', async t => {
 			deep: {
 				a: {
 					a1: 'a1',
-					a2: 'a2'
+					a2: 'a2',
 				},
 				b: {
-					b_bB: { // eslint-disable-line camelcase
+					b_bB: {
+						// eslint-disable-line camelcase
 						_bB1: '_b.b1',
-						bB2: 'b.b2'
+						bB2: 'b.b2',
 					},
 					b1: 'b1',
-					b2: 'b2'
-				}
-			}
-		}
+					b2: 'b2',
+				},
+			},
+		},
 	};
 
 	t.deepEqual(deep, expected);
 });
 
-test('should use custom base', async t => {
+test('should use custom base', async (t) => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
-		base: path.join(__dirname, 'fixtures')
+		base: path.join(__dirname, 'fixtures'),
 	});
 
 	const expected = {
 		deep: {
 			a: {
 				a1: 'a1',
-				a2: 'a2'
+				a2: 'a2',
 			},
 			b: {
-				b_bB: { // eslint-disable-line camelcase
+				b_bB: {
+					// eslint-disable-line camelcase
 					_bB1: '_b.b1',
-					bB2: 'b.b2'
+					bB2: 'b.b2',
 				},
 				b1: 'b1',
-				b2: 'b2'
-			}
-		}
+				b2: 'b2',
+			},
+		},
 	};
 
 	t.deepEqual(deep, expected);
 });
 
-test('should bust cache', async t => {
+test('should bust cache', async (t) => {
 	const a = await requireGlob('./fixtures/rand*.js');
 	const b = await requireGlob('./fixtures/rand*.js');
-	const c = await requireGlob('./fixtures/rand*.js', {bustCache: true});
-	const d = await requireGlob('./fixtures/rand*.js', {bustCache: true});
+	const c = await requireGlob('./fixtures/rand*.js', { bustCache: true });
+	const d = await requireGlob('./fixtures/rand*.js', { bustCache: true });
 	const e = await requireGlob('./fixtures/rand*.js');
 
 	t.equal(a.random, b.random);
@@ -152,16 +156,16 @@ test('should bust cache', async t => {
 	t.equal(d.random, e.random);
 });
 
-test('should use custom mapper', async t => {
+test('should use custom mapper', async (t) => {
 	const deep = requireGlob.sync('./fixtures/deep/**/*.js', {
-		mapper: function (options, filePath, i) {
+		mapper: function (options, filePath) {
 			const base = path.basename(filePath);
 
 			return {
 				path: base.toUpperCase(),
 				exports: base,
 			};
-		}
+		},
 	});
 
 	const expected = {
@@ -170,13 +174,13 @@ test('should use custom mapper', async t => {
 		B1: 'b1.js',
 		B2: 'b2.js',
 		BB2: 'b.b2.js',
-		_BB1: '_b.b1.js'
+		_BB1: '_b.b1.js',
 	};
 
 	t.deepEqual(deep, expected);
 });
 
-test('should use custom reducer', async t => {
+test('should use custom reducer', async (t) => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
 		reducer: function (options, tree, file) {
 			const base = path.basename(file.path);
@@ -184,7 +188,7 @@ test('should use custom reducer', async t => {
 			tree[base.toUpperCase()] = file.exports;
 
 			return tree;
-		}
+		},
 	});
 
 	const expected = {
@@ -193,19 +197,19 @@ test('should use custom reducer', async t => {
 		'B1.JS': 'b1',
 		'B2.JS': 'b2',
 		'B.B2.JS': 'b.b2',
-		'_B.B1.JS': '_b.b1'
+		'_B.B1.JS': '_b.b1',
 	};
 
 	t.deepEqual(deep, expected);
 });
 
-test('should use custom keygen', async t => {
+test('should use custom keygen', async (t) => {
 	const deep = await requireGlob('./fixtures/deep/**/*.js', {
 		keygen: function (options, file) {
 			return file.path
 				.replace(file.base + path.sep, '')
 				.replace(/\\/g, '/');
-		}
+		},
 	});
 
 	const expected = {
@@ -214,7 +218,7 @@ test('should use custom keygen', async t => {
 		'b/b_b-b/_b.b1.js': '_b.b1',
 		'b/b_b-b/b.b2.js': 'b.b2',
 		'b/b1.js': 'b1',
-		'b/b2.js': 'b2'
+		'b/b2.js': 'b2',
 	};
 
 	t.deepEqual(deep, expected);

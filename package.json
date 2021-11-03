@@ -4,7 +4,9 @@
   "description": "Require multiple modules using glob patterns. Supports exclusions.",
   "main": "src/require-glob.js",
   "scripts": {
-    "test": "node test/require-glob.js"
+    "lint": "npx eslint --fix \"{src,test}/**/*.js\" && npx prettier --write \"{src,test}/**/*.js\"",
+    "test": "node test/require-glob.js",
+    "cover": "npx c8 npm test"
   },
   "repository": {
     "type": "git",
@@ -39,5 +41,17 @@
   },
   "engines": {
     "node": ">= 10"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 8
+    }
+  },
+  "prettier": {
+    "singleQuote": true
   }
 }

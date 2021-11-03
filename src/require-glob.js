@@ -5,8 +5,8 @@ var globParent = require('glob-parent');
 var globby = require('globby');
 var parentModule = require('parent-module');
 
-var CAMELIZE_PATTERN = /[\.\-]+(.)/g;
-var SEPARATOR_PATTERN = /[\\\/]/;
+var CAMELIZE_PATTERN = /[.-]+(.)/g;
+var SEPARATOR_PATTERN = /[\\/]/;
 
 // Utilities
 
@@ -48,7 +48,7 @@ function mapper(options, filePath) {
 		cwd: cwd,
 		base: base,
 		path: filePath,
-		exports: require(filePath)
+		exports: require(filePath),
 	};
 }
 
@@ -83,9 +83,7 @@ function keygen(options, fileObj) {
 }
 
 function mapReduce(options, filePaths) {
-	return filePaths
-		.map(options.mapper)
-		.reduce(options.reducer, {});
+	return filePaths.map(options.mapper).reduce(options.reducer, {});
 }
 
 // API
@@ -93,7 +91,8 @@ function mapReduce(options, filePaths) {
 function normalizeOptions(pattern, options) {
 	pattern = [].concat(pattern || '');
 
-	options.base = options.base || path.resolve(options.cwd, globParent(pattern[0]));
+	options.base =
+		options.base || path.resolve(options.cwd, globParent(pattern[0]));
 	options.bustCache = options.bustCache || false;
 
 	options.mapper = (options.mapper || mapper).bind(null, options);
@@ -112,8 +111,7 @@ function requireGlob(pattern, options) {
 
 	options = normalizeOptions(pattern, options);
 
-	return globby(pattern, options)
-		.then(mapReduce.bind(null, options));
+	return globby(pattern, options).then(mapReduce.bind(null, options));
 }
 
 function requireGlobSync(pattern, options) {
