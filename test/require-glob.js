@@ -240,3 +240,11 @@ test('should use default object', async (t) => {
 
 	t.deepEqual(result.sort(), expected.sort());
 });
+
+test('should return default object', async (t) => {
+	const result = await requireGlob([], { default: [] });
+	
+	const expected = [];
+
+	t.deepEqual(result, expected);
+});
