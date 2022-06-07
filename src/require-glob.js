@@ -83,7 +83,7 @@ function keygen(options, fileObj) {
 }
 
 function mapReduce(options, filePaths) {
-	return filePaths.map(options.mapper).reduce(options.reducer, {});
+	return filePaths.map(options.mapper).reduce(options.reducer, options.default);
 }
 
 // API
@@ -98,6 +98,8 @@ function normalizeOptions(pattern, options) {
 	options.mapper = (options.mapper || mapper).bind(null, options);
 	options.reducer = (options.reducer || reducer).bind(null, options);
 	options.keygen = (options.keygen || keygen).bind(null, options);
+
+	options.default = (options.default || {});
 
 	return options;
 }

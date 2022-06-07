@@ -163,6 +163,33 @@ The [reducer][reduce] is responsible for generating the final object structure. 
 }
 ```
 
+##### default
+
+Type: `{any}` (default: `{}`)
+
+The initial value passed to the [reducer][reduce]. The default is an empty object, as expected by the default reducer.
+
+[reduce]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
+
+```js
+// file: /home/jdoe/my-module/index.js
+requireGlob('./src/**/*.js', {
+    default: [],
+    reducer: (options, result, fileObject) => {
+        result.push(fileObject.path);
+        return result;
+    }
+});
+
+// reducer example is changed to
+[
+    '/home/jdoe/my-module/src/unicorn.js',
+    '/home/jdoe/my-module/src/rainbow/red-orange.js',
+    '/home/jdoe/my-module/src/rainbow/_yellow_green.js',
+    '/home/jdoe/my-module/src/rainbow/BluePurple.js',
+]
+```
+
 ##### keygen
 
 Type: `{Function(options, fileObj): String|Array.<String>}`
