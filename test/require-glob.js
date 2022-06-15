@@ -224,12 +224,12 @@ test('should use custom keygen', async (t) => {
 	t.deepEqual(deep, expected);
 });
 
-test('should use default value', async (t) => {
+test('should use initial value', async (t) => {
 	const result = await requireGlob([
 		'./fixtures/{deep,shallow}/**/*.js',
 		'!./**/a*',
 	], {
-		default: [],
+		initialValue: [],
 		reducer: (options, result, fileObject) => {
 			result.push(fileObject.exports);
 			return result;
@@ -241,8 +241,8 @@ test('should use default value', async (t) => {
 	t.deepEqual(result.sort(), expected.sort());
 });
 
-test('should return default value', async (t) => {
-	const result = await requireGlob([], { default: [] });
+test('should return initial value', async (t) => {
+	const result = await requireGlob([], { initialValue: [] });
 
 	const expected = [];
 

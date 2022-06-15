@@ -163,7 +163,7 @@ The [reducer][reduce] is responsible for generating the final object structure. 
 }
 ```
 
-##### default
+##### initialValue
 
 Type: `{any}` (default: `{}`)
 
@@ -174,7 +174,7 @@ The initial value passed to the [reducer][reduce]. The default is an empty objec
 ```js
 // file: /home/jdoe/my-module/index.js
 requireGlob('./src/**/*.js', {
-    default: [],
+    initialValue: [],
     reducer: (options, result, fileObject) => {
         result.push(fileObject.path);
         return result;
