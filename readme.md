@@ -173,21 +173,25 @@ The initial value passed to the [reducer][reduce]. The default is an empty objec
 
 ```js
 // file: /home/jdoe/my-module/index.js
+const defaultDependencies = {
+    clover: require('clover'),
+    unicorn: require('unicorn'),
+};
+
 requireGlob('./src/**/*.js', {
-    initialValue: [],
-    reducer: (options, result, fileObject) => {
-        result.push(fileObject.path);
-        return result;
-    }
+    initialValue: defaultDependencies,
 });
 
 // reducer example is changed to
-[
-    '/home/jdoe/my-module/src/unicorn.js',
-    '/home/jdoe/my-module/src/rainbow/red-orange.js',
-    '/home/jdoe/my-module/src/rainbow/_yellow_green.js',
-    '/home/jdoe/my-module/src/rainbow/BluePurple.js',
-]
+{
+    clover: require('clover'),
+    unicorn: require('./src/unicorn.js'),
+    rainbow: {
+        redOrange: require('./src/rainbow/red-orange.js'),
+        _yellow_green: require('./src/rainbow/_yellow_green.js'),
+        BluePurple: require('./src/rainbow/BluePurple.js'),
+    }
+}
 ```
 
 ##### keygen
