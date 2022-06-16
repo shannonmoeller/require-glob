@@ -242,7 +242,7 @@ test('should use initial value', async (t) => {
 });
 
 test('should return initial value', async (t) => {
-	const result = await requireGlob([], { initialValue: [] });
+	const result = await requireGlob('./fixtures/bogu*.js', { initialValue: [] });
 
 	const expected = [];
 
