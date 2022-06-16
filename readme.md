@@ -163,6 +163,37 @@ The [reducer][reduce] is responsible for generating the final object structure. 
 }
 ```
 
+##### initialValue
+
+Type: `{any}` (default: `{}`)
+
+The initial value passed to the [reducer][reduce]. The default is an empty object, as expected by the default reducer.
+
+[reduce]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
+
+```js
+// file: /home/jdoe/my-module/index.js
+const defaultDependencies = {
+    clover: require('clover'),
+    unicorn: require('unicorn'),
+};
+
+requireGlob('./src/**/*.js', {
+    initialValue: defaultDependencies,
+});
+
+// reducer example is changed to
+{
+    clover: require('clover'),
+    unicorn: require('./src/unicorn.js'),
+    rainbow: {
+        redOrange: require('./src/rainbow/red-orange.js'),
+        _yellow_green: require('./src/rainbow/_yellow_green.js'),
+        BluePurple: require('./src/rainbow/BluePurple.js'),
+    }
+}
+```
+
 ##### keygen
 
 Type: `{Function(options, fileObj): String|Array.<String>}`

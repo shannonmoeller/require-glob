@@ -223,3 +223,48 @@ test('should use custom keygen', async (t) => {
 
 	t.deepEqual(deep, expected);
 });
+
+test('should use initial value', async (t) => {
+	const result = await requireGlob([
+		'./fixtures/{deep,shallow}/**/*.js',
+		'!./**/a*',
+	], {
+		initialValue: [],
+		reducer: (options, result, fileObject) => {
+			result.push(fileObject.exports);
+			return result;
+		}
+	});
+
+	const expected = ['_b.b1','b.b2', 'b1', 'b2', 'b', 'c', { e: 'e' }];
+
+	t.deepEqual(result.sort(), expected.sort());
+});
+
+test('should return initial value', async (t) => {
+	const result = await requireGlob('./fixtures/bogu*.js', { initialValue: [] });
+
+	const expected = [];
+
+	t.deepEqual(result, expected);
+});
+
+test('should overwrite initial value', async (t) => {
+	const oneA = await requireGlob('./fixtures/rand*.js', {
+		initialValue: {
+			fixed: 'a',
+			random: 'b',
+		}
+	});
+	const oneB = requireGlob.sync('./fixtures/rand*.js', {
+		initialValue: {
+			fixed: 'a',
+			random: 'b',
+		}
+	});
+
+	t.equal(typeof oneA.fixed, 'string')
+	t.equal(typeof oneA.random, 'number');
+	t.equal(typeof oneB.fixed, 'string')
+	t.equal(typeof oneB.random, 'number');
+})
